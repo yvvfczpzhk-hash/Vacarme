@@ -118,11 +118,11 @@ button{font-family:inherit; cursor:pointer; border:none}
   border-radius:999px; padding:8px 20px 8px 8px; animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
 .lp .av{width:44px;height:44px;border-radius:50%;background:var(--pc);display:flex;align-items:center;justify-content:center;font-size:24px}
 .lp .nm{font-weight:900; font-size:19px}
-.actsrecap{display:grid; grid-template-columns:repeat(auto-fit,minmax(185px,1fr)); gap:12px; width:min(1080px,94vw)}
+.actsrecap{display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:10px; width:min(1180px,96vw); max-height:34vh; overflow-y:auto}
 .actsrecap .ar{background:var(--panel); border:2px solid var(--line); border-top:6px solid var(--ac);
   border-radius:var(--rs); padding:14px 16px; text-align:left}
-.actsrecap .ar h3{color:var(--ac); font-size:18px}
-.actsrecap .ar p{color:var(--mut); font-size:13.5px; font-weight:700; margin-top:4px; line-height:1.35}
+.actsrecap .ar h3{color:var(--ac); font-size:15.5px}
+.actsrecap .ar p{color:var(--mut); font-size:12px; font-weight:700; margin-top:3px; line-height:1.3}
 .actsrecap .ar .x{float:right; font-family:'Fredoka'; color:var(--ac); font-size:22px}
 
 /* ============ READY / JOKER ============ */
@@ -298,6 +298,20 @@ button{font-family:inherit; cursor:pointer; border:none}
 .wario{position:fixed; width:150px; z-index:70; pointer-events:none; border-radius:22px;
   box-shadow:0 12px 34px rgba(0,0,0,.55); border:4px solid #B388FF; will-change:transform}
 
+.ccbig{font-family:'Fredoka'; font-weight:700; font-size:min(14vw,150px); line-height:1; color:var(--act); text-shadow:0 8px 0 rgba(0,0,0,.35)}
+.cctarget{font-family:'Fredoka'; font-weight:600; font-size:30px}
+.rfzone{width:min(760px,90vw); height:330px; border-radius:26px; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; cursor:pointer; font-family:'Fredoka'; font-weight:700; font-size:52px; color:#fff;
+  box-shadow:0 14px 40px rgba(0,0,0,.45); user-select:none; transition:background .1s}
+.rfzone.wait{background:#B3261E}
+.rfzone.go{background:#16A34A}
+.rfzone.pause{background:var(--panel3); font-size:34px}
+.rfzone .sub2{font-size:19px; font-family:'Nunito'; font-weight:900; opacity:.85; margin-top:10px}
+.acword{display:inline-flex; align-items:center; gap:10px; background:var(--panel2); border:2.5px solid var(--line);
+  border-radius:14px; padding:10px 18px; font-weight:900; font-size:19px; margin:5px}
+.acword.match{border-color:var(--good)}
+.acword .emos{font-size:22px}
+
 /* ============ DIVERS ============ */
 #hostforce{position:fixed; bottom:16px; right:16px; z-index:60; display:none; opacity:.6}
 #hostforce:hover{opacity:1}
@@ -343,15 +357,9 @@ h2.phead span{color:var(--act)}
   <div class="roomcode mt" id="codebox" title="Cliquer pour copier">----</div>
   <div class="hint mt">Chacun ouvre la même page sur son PC et rejoint avec ce code (vocal Discord conseillé 🎧)</div>
   <div class="lobbyrow mt" id="lobbyplayers"></div>
-  <div class="actsrecap mt">
-    <div class="ar" style="--ac:#FFD023"><span class="x">🎰</span><h3>Tu Préfères</h3><p>3 dilemmes : vote et prédis la majorité.</p></div>
-    <div class="ar" style="--ac:#22D3EE"><span class="x">🎰</span><h3>Dessine ou Crève</h3><p>Chacun dessine, les autres devinent. ×2</p></div>
-    <div class="ar" style="--ac:#FF8A3D"><span class="x">🎰</span><h3>Quitte ou Double</h3><p>Retourne des cartes… stop ou tout perdre.</p></div>
-    <div class="ar" style="--ac:#FF3B5C"><span class="x">🎰</span><h3>L'Imposteur</h3><p>Indices, débat, vote… contre-attaque ! ×3</p></div>
-    <div class="ar" style="--ac:#7CF7D4"><span class="x">🎰</span><h3>Indice Unique</h3><p>Coop : faites deviner sans vous doublonner.</p></div>
-    <div class="ar" style="--ac:#B388FF"><span class="x">⁉️</span><h3>??? MYSTÈRE ???</h3><p>Peut surgir après n'importe quel jeu. Points ×2. Quelqu'un vous observe…</p></div>
-  </div>
-  <div class="hint mt">🎰 <b>Mode Roulette</b> : l'ordre des 5 jeux est tiré au sort · 🃏 <b>1 Joker ×2</b> chacun, à dégainer avant une manche</div>
+  <div class="actsrecap mt" id="actsrecap"></div>
+  <div class="row mt" id="gamecount"></div>
+  <div class="hint mt">🎰 <b>Mode Roulette</b> : les jeux sont tirés au sort dans un pool de 10 · 🃏 <b>1 Joker ×2</b> chacun · 🤝 = jeu coopératif</div>
   <div class="row mt" id="lobbyactions"></div>
 </div>
 
@@ -460,17 +468,35 @@ const PAIRES_IMPOSTEUR=[
 ["Père Noël","Petite souris"],["Sieste","Grasse matinée"],["Pyjama","Jogging"],["Écharpe","Bonnet"],
 ["Parasol","Parapluie"],["Orage","Canicule"],["Aquarium","Planétarium"],["Loup-garou","Uno"]];
 
+const THEMES_AC=["Un truc qu'on trouve dans une salle de bain","Une excuse pour annuler une soirée","Un plat de fainéant","Un truc qui pique","Une appli qu'on ouvre sans réfléchir","Un objet dans une boîte à gants","Un truc qu'on perd tout le temps","Une star française","Un jeu vidéo culte","Un truc rouge","Une chose qu'on fait le dimanche","Un métier de rêve d'enfant","Un truc dégoûtant au frigo","Une série à binge-watcher","Un accessoire de plage","Un truc bruyant","Une boisson de soirée","Un animal moche","Un truc de vieux","Un super-pouvoir","Une phobie courante","Un truc qui colle","Un fromage","Une ville de vacances","Un sport fatigant","Un objet de camping","Un truc qu'on vole à l'hôtel","Une chanson de karaoké","Un prénom de grand-mère","Un truc dans un kebab","Une raison d'être en retard","Un cadeau nul","Un emoji surutilisé","Un truc de salle de sport","Une matière détestée à l'école","Un aliment vert","Un bruit agaçant","Un objet de sac à main","Un dessert de cantine","Un truc qui fait peur la nuit"];
+const PROMPTS_QUI=["finir en garde à vue","survivre à une apocalypse zombie","oublier son propre anniversaire","pleurer devant un Disney","devenir riche en premier","se perdre AVEC un GPS","devenir influenceur","dormir pendant une alarme incendie","manger un truc tombé par terre","envoyer un message à son ex à 3h du matin","gagner Koh-Lanta","se faire virer pour un fou rire","finir sa vie avec 12 chats","croire une fake news","arriver en retard à son propre mariage","dépenser son salaire en une soirée","partir vivre à l'étranger sur un coup de tête","faire semblant de connaître une chanson","gérer le mieux une crise","stalker le plus sur Instagram","rater un avion","devenir complotiste","chanter sous la douche","tricher à un jeu de société","se marier à Las Vegas","adopter un animal exotique","oublier où est garée sa voiture","faire un régime qui dure 2 jours","répondre au boss du tac au tac","passer à la télé","mentir sur son CV","dormir jusqu'à 16h","courir un marathon sur un pari","croire aux fantômes","se battre pour la dernière part de pizza","être accro à son téléphone","pleurer de rire en premier","organiser les vacances du groupe","devenir maire du village","manger le dessert des autres en douce"];
+const CATS_BAC=["Un animal","Un prénom","Une ville","Un pays","Un fruit ou légume","Un métier","Une marque","Un plat","Un objet de la maison","Un sport","Un film ou une série","Une célébrité","Quelque chose de rouge","Un truc de plage","Une boisson","Un instrument de musique","Un vêtement","Une matière scolaire","Un jeu vidéo","Quelque chose de froid","Un moyen de transport","Un dessert","Un truc de cuisine","Un personnage de fiction"];
+const LETTRES_BAC='ABCDEFGHILMNOPRST';
 const COULEURS=['#FF4D8D','#22D3EE','#FFD023','#4ADE80','#FF8A3D','#B388FF','#7CF7D4','#FF6B6B'];
 const EMOJIS=['🦊','🐙','🦖','🐸','🦩','🐼','🐨','🦁'];
 const ACTES=[
- {id:'tp',    nom:'TU PRÉFÈRES',      mult:1, col:'#FFD023', desc:'Vote… et prédis la majorité !', pts:'20 pts par bonne prédiction'},
- {id:'draw',  nom:'DESSINE OU CRÈVE', mult:2, col:'#22D3EE', desc:'Un crayon, quatre détectives.', pts:'points ×2'},
- {id:'qd',    nom:'QUITTE OU DOUBLE', mult:1, col:'#FF8A3D', desc:'Stop… ou encore une carte ?',  pts:'points = la somme de tes cartes'},
- {id:'imp',   nom:"L'IMPOSTEUR",      mult:3, col:'#FF3B5C', desc:'Un intrus se cache parmi vous…', pts:'points ×3'},
- {id:'indice',nom:'INDICE UNIQUE',    mult:1, col:'#7CF7D4', desc:'Coopérez… sans vous répéter !', pts:'devineur +25 · indice non doublonné +10'},
- {id:'panik', nom:'PANIK !',          mult:2, col:'#B388FF', desc:'⁉️ MODE MYSTÈRE ⁉️',            pts:'TOUS LES POINTS ×2 · 3 vies'}];
-const POOL=[0,1,2,3,4]; const PANIK_IDX=5;
-const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, qd_turn:8, qd_reveal:7, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, pk:[4,4,3,3,3,3,2,2,2,2,2,2]};
+ {id:'tp',    nom:'TU PRÉFÈRES',      mult:1, col:'#FFD023', desc:'Vote… et prédis la majorité !', pts:'20 pts par bonne prédiction', est:n=>2.5},
+ {id:'draw',  nom:'DESSINE OU CRÈVE', mult:2, col:'#22D3EE', desc:'Un crayon, quatre détectives.', pts:'points ×2', est:n=>1.7*n},
+ {id:'qd',    nom:'QUITTE OU DOUBLE', mult:1, col:'#FF8A3D', desc:'Stop… ou encore une carte ?',  pts:'points = la somme de tes cartes', est:n=>3.5},
+ {id:'imp',   nom:"L'IMPOSTEUR",      mult:3, col:'#FF3B5C', desc:'Un intrus se cache parmi vous…', pts:'points ×3', est:n=>7},
+ {id:'indice',nom:'INDICE UNIQUE',    mult:1, col:'#7CF7D4', desc:'Coopérez… sans vous répéter !', pts:'devineur +25 · indice non doublonné +10', coop:true, est:n=>1.3*n},
+ {id:'accord',nom:'ACCORD PARFAIT',   mult:1, col:'#F472B6', desc:'Pensez pareil… sans vous parler !', pts:'+10 par joueur accordé avec toi', coop:true, est:n=>2.5},
+ {id:'qui',   nom:'QUI DE NOUS ?',    mult:1, col:'#4ADE80', desc:'Votez pour le coupable idéal.', pts:'majorité +15 · désigné +10', est:n=>2.5},
+ {id:'bac',   nom:'PETIT BAC ÉCLAIR', mult:1, col:'#60A5FA', desc:'Une lettre, une catégorie, 20 s !', pts:'valide +10 · unique +5', est:n=>2},
+ {id:'coop',  nom:'COMPTE ENSEMBLE',  mult:1, col:'#A3E635', desc:'Objectif collectif : coordonnez-vous !', pts:'réussite d\'équipe : +25 CHACUN', coop:true, est:n=>1.5},
+ {id:'rf',    nom:'RÉFLEXE ROYALE',   mult:1, col:'#FB923C', desc:'Le plus rapide rafle la mise.', pts:'points au classement : 30/22/16/10/6', est:n=>1.5},
+ {id:'panik', nom:'PANIK !',          mult:2, col:'#B388FF', desc:'⁉️ MODE MYSTÈRE ⁉️',            pts:'TOUS LES POINTS ×2 · 3 vies', est:n=>3}];
+const POOL=[0,1,2,3,4,5,6,7,8,9]; const PANIK_IDX=10;
+function estMin(N,np){ const avg=POOL.reduce((a,i)=>a+ACTES[i].est(np||5),0)/POOL.length;
+  return Math.round(avg*N+3+0.45*N); }
+function drawGames(N){ let seq=[]; while(seq.length<N){ const b=shuffle(POOL);
+    if(seq.length&&b[0]===seq[seq.length-1]){ b.push(b.shift()); } seq=seq.concat(b); }
+  return seq.slice(0,N); }
+function pickIdx(setName,arr){ const s=H[setName]||(H[setName]=new Set());
+  let idxs=arr.map((_,i)=>i).filter(i=>!s.has(i));
+  if(!idxs.length){ s.clear(); idxs=arr.map((_,i)=>i); }
+  const i=pick(idxs); s.add(i); return i; }
+const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, qd_turn:8, qd_reveal:7, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, ac_write:25, qui_vote:25, bac_write:20, coop_play:12, rf_play:16, pk:[4,4,3,3,3,3,2,2,2,2,2,2]};
 const PTS={pred:20, drawFind:[30,10], drawArtist:10, impCatch:20, impEscape:50, impConsol:10};
 
 /* ================================================================
@@ -582,7 +608,8 @@ let H={ phase:'home', players:[], actIdx:-1, roundLabel:'', pubData:{}, privFn:n
 let S=null, ME=null;          // snapshot courant + vue privée (côté rendu, hôte inclus)
 let phaseResolve=null;
 
-function pub(){ return { phase:H.phase, actIdx:H.actIdx, roundLabel:H.roundLabel,
+function pub(){ return { phase:H.phase, actIdx:H.actIdx, roundLabel:H.roundLabel, nbGames:H.nbGames||6,
+  estMin:estMin(H.nbGames||6,H.players.length||5),
   players:H.players.map(p=>({slot:p.slot,name:p.name,color:p.color,emoji:p.emoji,score:p.score,joker:p.joker,connected:p.connected,armed:!!H.jokerArm[p.slot]})),
   data:H.pubData, timer:{rem:H.timer.rem,total:H.timer.total} }; }
 function privFor(slot){ const p=H.players.find(x=>x.slot===slot)||{};
@@ -604,7 +631,7 @@ function endPhaseEarly(){ if(!phaseResolve)return; stopTimer(); const r=phaseRes
 function connectedSlots(){ return H.players.filter(p=>p.connected).map(p=>p.slot); }
 function addPts(slot,base){ const mult=H.actIdx>=0?ACTES[H.actIdx].mult:1; const jk=H.jokerArm[slot]?2:1;
   const v=base*mult*jk; const p=H.players.find(x=>x.slot===slot); if(p)p.score+=v; return v; }
-function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,qd:0,pk:0,ind:0}; H.stats[slot][k]+=v; }
+function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,qd:0,pk:0,ind:0,ac:0,qui:0,bac:0,coop:0,rf:0}; H.stats[slot][k]+=v; }
 
 /* fx synchronisé (flash / compte à rebours) */
 function fxAll(kind,a){ bcast({t:'fx',kind,a});
@@ -655,6 +682,11 @@ function hostHandle(slot,m){
   if(H.phase==='imp_debate'&&a.type==='rdy'){ impRdy(slot); return; }
   if(H.phase==='qd_turn'&&a.type==='qd'){ qdChoose(slot,a.go); return; }
   if(H.phase==='ind_write'&&a.type==='ind_c'){ indClue(slot,a.w); return; }
+  if(H.phase==='ac_write'&&a.type==='ac'){ acAns(slot,a.w); return; }
+  if(H.phase==='qui_vote'&&a.type==='qv'){ quiVote(slot,a.who); return; }
+  if(H.phase==='bac_write'&&a.type==='bw'){ bacAns(slot,a.w); return; }
+  if(H.phase==='coop_play'&&a.type==='cc'){ ccAdd(slot,a.n); return; }
+  if(H.phase==='rf_play'&&a.type==='rf'){ rfReport(slot,a.ms); return; }
   if(H.phase==='ind_guess'&&a.type==='ind_g'){ indGuess(slot,a.w); return; }
   if(H.phase==='panik_round'&&a.type==='pk'){ pkReport(slot,a.ok); return; }
 }
@@ -673,6 +705,7 @@ function clientOnData(m){ switch(m.t){
   case 'fx': if(m.kind==='count')countdown(); else if(m.kind==='roulette')roulette(m.a); else flash(m.a.big,m.a.sub,m.a.col,m.a.ms); break;
   case 'segs': case 'cv': cvOnMsg(m); break;
   case 'chat': feedAdd(m); break;
+  case 'ccn': ccnUI(m.n); break;
   case 'nope': toast('❌ '+m.msg,4000); $('#joinhint').innerHTML=m.msg; NET.alive=false; break;
 } }
 
@@ -683,7 +716,7 @@ async function runTournament(){
   H.actIdx=-1; H.players.forEach(p=>{p.score=0;p.joker=true;}); H.stats={}; H.lastScores={};
   // usedWords / usedPairs / usedDil persistent entre les tournois de la soirée (recyclage auto si épuisé)
   await fxAll('flash',{big:'QUE LE TOURNOI<br>COMMENCE&nbsp;!',sub:'🎰 Mode Roulette · un mode mystère rôde · gardez votre joker 🃏',col:'#B388FF',ms:2800});
-  const ordre=shuffle(POOL);
+  const ordre=drawGames(H.nbGames||6);
   const panikApres=rnd(ordre.length);   // le mystère surgit après ce jeu (jamais avant le 1er)
   for(let g=0;g<ordre.length;g++){ const ai=ordre[g];
     await fxAll('roulette',{num:g+1,total:ordre.length,pick:ai});
@@ -704,6 +737,11 @@ async function runAct(id){
   if(id==='qd')await runQD();
   if(id==='imp')await runImp();
   if(id==='indice')await runIndice();
+  if(id==='accord')await runAccord();
+  if(id==='qui')await runQui();
+  if(id==='bac')await runBac();
+  if(id==='coop')await runCoop();
+  if(id==='rf')await runReflexe();
 }
 async function readyPhase(label){ H.roundLabel=label; H.jokerArm={};
   await setPhase('ready',DUREES.ready,{label});
@@ -872,6 +910,122 @@ function indGuess(slot,w){ const N=H.secret.ind; if(!N||H.phase!=='ind_guess'||s
   w=(w||'').trim().slice(0,30); if(!w)return; N.guess=w; endPhaseEarly(); }
 
 /* ================================================================
+   ACCORD PARFAIT (semi-coop, façon Mouton Mouton)
+================================================================ */
+async function runAccord(){ for(let m=0;m<3;m++){ await readyPhase('Thème '+(m+1)+' / 3'); await accordRound(); } }
+async function accordRound(){
+  const theme=THEMES_AC[pickIdx('usedAc',THEMES_AC)];
+  const A={theme,ans:{}}; H.secret.ac=A;
+  await setPhase('ac_write',DUREES.ac_write,{theme,done:[]},
+    s=>({myClue:A.ans[s]||null}));
+  // clusters par normalisation (pluriel simple toléré)
+  const nk=w=>norm(w).replace(/s$/,'');
+  const groups={};
+  Object.entries(A.ans).forEach(([s,w])=>{ const k=nk(w); (groups[k]=groups[k]||[]).push(+s); });
+  const gains={}, clusters=[];
+  Object.values(groups).forEach(ss=>{ clusters.push({slots:ss,word:A.ans[ss[0]]});
+    if(ss.length>1)ss.forEach(s=>{ gains[s]=addPts(s,10*(ss.length-1)); stat(s,'ac',ss.length-1); }); });
+  clusters.sort((a,b)=>b.slots.length-a.slots.length);
+  SFX.reveal();
+  await setPhase('ac_reveal',DUREES.reveal+2,{theme,clusters,gains});
+}
+function acAns(slot,w){ const A=H.secret.ac; if(!A||H.phase!=='ac_write'||A.ans[slot])return;
+  w=(w||'').trim().replace(/\s+/g,' ').slice(0,30); if(!w)return;
+  A.ans[slot]=w; H.pubData.done=Object.keys(A.ans).map(Number); push();
+  if(connectedSlots().every(s=>A.ans[s]))endPhaseEarly(); }
+
+/* ================================================================
+   QUI DE NOUS ? (vote social)
+================================================================ */
+async function runQui(){ for(let m=0;m<3;m++){ await readyPhase('Question '+(m+1)+' / 3'); await quiRound(); } }
+async function quiRound(){
+  const prompt=PROMPTS_QUI[pickIdx('usedQui',PROMPTS_QUI)];
+  const Q={prompt,votes:{}}; H.secret.qui=Q;
+  await setPhase('qui_vote',DUREES.qui_vote,{prompt,done:[]},
+    s=>({myVote:Q.votes[s]??null}));
+  const tally={}; Object.values(Q.votes).forEach(v=>tally[v]=(tally[v]||0)+1);
+  let max=0,who=[]; Object.entries(tally).forEach(([s,n])=>{ if(n>max){max=n;who=[+s];} else if(n===max)who.push(+s); });
+  const star=(max>0&&who.length===1)?who[0]:null;
+  const gains={};
+  if(star!=null){ gains[star]=addPts(star,10);
+    Object.entries(Q.votes).forEach(([s,v])=>{ if(v===star){ gains[s]=(gains[s]||0)+addPts(+s,15); stat(+s,'qui'); } }); }
+  SFX.reveal();
+  await setPhase('qui_reveal',DUREES.reveal+2,{prompt,votes:Q.votes,tally,star,gains});
+}
+function quiVote(slot,v){ const Q=H.secret.qui; if(!Q||H.phase!=='qui_vote')return;
+  v=+v; if(v===slot||!H.players.some(p=>p.slot===v))return;
+  Q.votes[slot]=v; H.pubData.done=Object.keys(Q.votes).map(Number); push();
+  if(connectedSlots().every(s=>Q.votes[s]!=null))endPhaseEarly(); }
+
+/* ================================================================
+   PETIT BAC ÉCLAIR
+================================================================ */
+async function runBac(){ for(let m=0;m<3;m++){ await readyPhase('Manche '+(m+1)+' / 3'); await bacRound(); } }
+async function bacRound(){
+  const cat=CATS_BAC[pickIdx('usedBac',CATS_BAC)];
+  const let_=LETTRES_BAC[rnd(LETTRES_BAC.length)];
+  const B={cat,let:let_,ans:{}}; H.secret.bac=B;
+  await setPhase('bac_write',DUREES.bac_write,{cat,let:let_,done:[]},
+    s=>({myClue:B.ans[s]||null}));
+  const gains={}, res=[];
+  const nk=w=>norm(w);
+  Object.entries(B.ans).forEach(([s,w])=>{
+    const valid=nk(w).startsWith(norm(let_));
+    const unique=valid&&!Object.entries(B.ans).some(([s2,w2])=>+s2!==+s&&nk(w2)===nk(w));
+    let pts=0;
+    if(valid){ pts=addPts(+s,10); stat(+s,'bac'); }
+    if(unique){ pts+=addPts(+s,5); }
+    if(pts)gains[s]=pts;
+    res.push({slot:+s,word:w,valid,unique}); });
+  SFX.reveal();
+  await setPhase('bac_reveal',DUREES.reveal+2,{cat,let:let_,res,gains});
+}
+function bacAns(slot,w){ const B=H.secret.bac; if(!B||H.phase!=='bac_write'||B.ans[slot])return;
+  w=(w||'').trim().replace(/\s+/g,' ').slice(0,30); if(!w)return;
+  B.ans[slot]=w; H.pubData.done=Object.keys(B.ans).map(Number); push();
+  if(connectedSlots().every(s=>B.ans[s]))endPhaseEarly(); }
+
+/* ================================================================
+   COMPTE ENSEMBLE (coop totale) — objectif collectif en temps réel
+================================================================ */
+async function runCoop(){ for(let m=0;m<2;m++){ await readyPhase('Objectif '+(m+1)+' / 2'); await coopRound(m); } }
+async function coopRound(m){
+  const np=Math.max(1,connectedSlots().length);
+  const target=(m===0?11:15)*np+rnd(np+1);
+  const tol=m===0?4:2;
+  const C={total:0,sent:-1,target,tol}; H.secret.cc=C;
+  const iv=setInterval(()=>{ if(C.total!==C.sent){ C.sent=C.total; bcast({t:'ccn',n:C.total}); ccnUI(C.total); } },250);
+  await setPhase('coop_play',DUREES.coop_play,{target,tol});
+  clearInterval(iv);
+  const ok=Math.abs(C.total-target)<=tol;
+  const gains={};
+  if(ok)connectedSlots().forEach(s=>{ gains[s]=addPts(s,25); stat(s,'coop'); });
+  if(ok)SFX.found(); else SFX.buzz();
+  await setPhase('coop_reveal',DUREES.reveal+2,{target,tol,total:C.total,ok,gains});
+}
+function ccAdd(slot,n){ const C=H.secret.cc; if(!C||H.phase!=='coop_play')return;
+  C.total+=Math.max(0,Math.min(30,n|0)); }
+function ccnUI(n){ const e=$('#cctotal'); if(e)e.textContent=n; }
+
+/* ================================================================
+   RÉFLEXE ROYALE (façon Playus) — points au classement
+================================================================ */
+async function runReflexe(){ await readyPhase('3 signaux · clique dès le VERT'); await rfRound(); }
+async function rfRound(){
+  const delays=[1200+rnd(2200),1200+rnd(2200),1200+rnd(2200)];
+  const R2={ms:{},delays}; H.secret.rf=R2;
+  await setPhase('rf_play',DUREES.rf_play,{delays});
+  const done=Object.entries(R2.ms).sort((a,b)=>a[1]-b[1]);
+  const bar=[30,22,16,10,6,4,4,4]; const gains={};
+  done.forEach(([s,ms],i)=>{ gains[s]=addPts(+s,bar[Math.min(i,bar.length-1)]); stat(+s,'rf',i===0?3:1); });
+  SFX.reveal();
+  await setPhase('rf_reveal',DUREES.reveal+2,{rank:done.map(([s,ms])=>({slot:+s,ms:+ms})),gains});
+}
+function rfReport(slot,ms){ const R2=H.secret.rf; if(!R2||H.phase!=='rf_play'||R2.ms[slot]!=null)return;
+  R2.ms[slot]=Math.max(0,Math.min(99999,ms|0));
+  if(connectedSlots().every(s=>R2.ms[s]!=null))endPhaseEarly(); }
+
+/* ================================================================
    PANIK ! (logique hôte) — micro-défis façon WarioWare
 ================================================================ */
 async function runPanik(){
@@ -975,6 +1129,11 @@ function computeTitles(){ const out=[];
   best('qd','Sang froid · roi du stop-ou-encore','🧊');
   best('pk','Nerfs d\'acier · survivant du chaos','⚡');
   best('ind','Muse · indices qui font mouche','💡');
+  best('ac','Mouton en chef · toujours accordé','🐑');
+  best('qui','Sociologue · connaît le groupe par cœur','👉');
+  best('bac','Dico vivant · réponses éclair','🔤');
+  best('coop','Esprit d\'équipe · objectifs collectifs','🤝');
+  best('rf','Cobra · réflexes surnaturels','🏁');
   return out; }
 
 /* ================================================================
@@ -1006,6 +1165,25 @@ function renderLobby(){ const s=S||pub(); $('#codebox').textContent=NET.code;
   s.players.forEach(p=>{ const d=el('div','lp'); d.style.setProperty('--pc',p.color);
     d.innerHTML='<span class="av">'+p.emoji+'</span><span class="nm">'+esc(p.name)+(p.slot===0?' 👑':'')+'</span>';
     row.appendChild(d); });
+  // récap dynamique des 10 jeux + carte mystère
+  const rec=$('#actsrecap'); rec.innerHTML='';
+  POOL.forEach(i=>{ const a=ACTES[i]; const d=el('div','ar');
+    d.style.setProperty('--ac',a.col);
+    d.innerHTML='<span class="x">'+(a.coop?'🤝':'🎰')+'</span><h3>'+a.nom+'</h3><p>'+a.desc+'</p>';
+    rec.appendChild(d); });
+  const my=el('div','ar'); my.style.setProperty('--ac','#B388FF');
+  my.innerHTML='<span class="x">⁉️</span><h3>??? MYSTÈRE ???</h3><p>Surgit après n\'importe quel jeu. Points ×2. Quelqu\'un vous observe…</p>';
+  rec.appendChild(my);
+  // sélecteur de durée
+  const gc=$('#gamecount'); gc.innerHTML='';
+  const nb=s.nbGames||6, est=s.estMin||estMin(nb,s.players.length);
+  if(NET.isHost){ const minus=el('button','btn sm ghost','−'), plus=el('button','btn sm ghost','+');
+    minus.onclick=()=>{ H.nbGames=Math.max(3,(H.nbGames||6)-1); push(); };
+    plus.onclick=()=>{ H.nbGames=Math.min(12,(H.nbGames||6)+1); push(); };
+    gc.appendChild(minus);
+    gc.appendChild(el('div','disp','🎮 <b style="font-size:26px">'+nb+'</b> jeux &nbsp;·&nbsp; ⏱ ≈ '+est+' min'));
+    gc.appendChild(plus); }
+  else gc.appendChild(el('div','disp','🎮 '+nb+' jeux · ⏱ ≈ '+est+' min (choisi par l\'hôte)'));
   const act=$('#lobbyactions'); act.innerHTML='';
   if(NET.isHost){ const b=el('button','btn','🚀 LANCER LE TOURNOI');
     b.disabled=s.players.length<3;
@@ -1065,7 +1243,7 @@ function render(){ if(!S)return;
   screen(null); renderHUD();
   const key=S.phase+':'+(S.data?.drawer??'')+':'+S.roundLabel;
   if(S.phase==='draw_live'&&lastKey===key){ drawLiveUpdate(); return; }
-  if((S.phase==='imp_clue'||S.phase==='ind_write')&&lastKey===key&&!ME.myClue){ const dr=$('#dotsrow');
+  if((S.phase==='imp_clue'||S.phase==='ind_write'||S.phase==='ac_write'||S.phase==='bac_write')&&lastKey===key&&!ME.myClue){ const dr=$('#dotsrow');
     if(dr){ dr.remove(); dots($('#stage'),S.data.done); } return; }
   if(lastKey.startsWith('draw_live')&&S.phase==='draw_reveal'&&CV.cvs){
     try{ GALLERY.push({img:CV.cvs.toDataURL('image/png'),word:S.data.word,drawer:S.data.drawer}); }catch(e){} }
@@ -1371,6 +1549,122 @@ R.ind_reveal=st=>{ const g=px(S.data.guesser); const ok=S.data.ok;
     ((S.data.cancelled||[]).length?'<div class="hint">'+S.data.cancelled.length+' indice(s) annulé(s) pour doublon 🤦</div>':'');
   b.appendChild(w); gainsList(b,S.data.gains); st.appendChild(b);
   if(ok)SFX.found(); else SFX.buzz(); };
+
+/* ---- ACCORD PARFAIT ---- */
+function inputRow(st,ph,atype,placeholder,confirmed){
+  const b=el('div','readybox mt');
+  if(confirmed)b.appendChild(el('div','jokerflag','✔ Envoyé : «&nbsp;'+esc(confirmed)+'&nbsp;»'));
+  else{ const row=el('div','row');
+    const inp=el('input','field'); inp.maxLength=30; inp.placeholder=placeholder; inp.style.width='360px';
+    const go=el('button','btn sm','Envoyer');
+    const send=()=>{ const v=inp.value.trim(); if(!v)return; sendHost({t:'a',a:{type:atype,w:v}}); };
+    go.onclick=send; inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+    row.appendChild(inp); row.appendChild(go); b.appendChild(row);
+    setTimeout(()=>inp.focus(),150); }
+  st.appendChild(b); }
+
+R.ac_write=st=>{ st.appendChild(el('h2','phead','🐑 Pensez <span>PAREIL</span> !'));
+  st.appendChild(el('div','subhead','Thème : «&nbsp;'+esc(S.data.theme)+'&nbsp;» — écris LA réponse que les autres vont écrire. +10 par joueur accordé avec toi !'));
+  inputRow(st,'ac_write','ac','Ta réponse…',ME.myClue);
+  dots(st,S.data.done); };
+
+R.ac_reveal=st=>{ st.appendChild(el('h2','phead','«&nbsp;'+esc(S.data.theme)+'&nbsp;» — les <span>accords</span>'));
+  const w=el('div','winlist');
+  S.data.clusters.forEach(c=>{ const d=el('div','acword'+(c.slots.length>1?' match':''));
+    d.innerHTML='«&nbsp;'+esc(c.word)+'&nbsp;» <span class="emos">'+c.slots.map(s=>px(s).emoji).join('')+'</span>'+
+      (c.slots.length>1?' <b style="color:var(--good)">+'+(10*(c.slots.length-1)*(ACTES[S.actIdx].mult||1))+' chacun</b>':' <span class="hint">seul au monde 🥲</span>');
+    w.appendChild(d); });
+  st.appendChild(w); gainsList(st,S.data.gains); };
+
+/* ---- QUI DE NOUS ? ---- */
+function quiGrid(st,votable){ const g=el('div','cluegrid');
+  S.players.filter(p=>p.connected).forEach(p=>{
+    const c=el('div','cluecard'+(votable&&p.slot!==ME.slot?' votable':'')+(ME.myVote===p.slot?' voted':''));
+    c.style.setProperty('--pc',p.color);
+    c.innerHTML='<div class="cw" style="font-size:38px;min-height:44px">'+p.emoji+'</div><div class="who">'+esc(p.name)+(p.slot===ME.slot?' (toi)':'')+'</div>';
+    if(votable&&p.slot!==ME.slot)c.onclick=()=>{SFX.click(); sendHost({t:'a',a:{type:'qv',who:p.slot}});};
+    g.appendChild(c); });
+  st.appendChild(g); }
+
+R.qui_vote=st=>{ st.appendChild(el('h2','phead','Qui de nous est le plus susceptible de…'));
+  st.appendChild(el('div','dilemme','«&nbsp;'+esc(S.data.prompt)+'&nbsp;» ?'));
+  quiGrid(st,true);
+  st.appendChild(el('div','hint mt','+15 si tu votes comme la majorité · le désigné empoche +10 pour sa gloire'));
+  dots(st,S.data.done); };
+
+R.qui_reveal=st=>{ const star=S.data.star;
+  st.appendChild(el('h2','phead',star!=null?('👉 Le groupe a parlé : <span>'+esc(px(star).name)+'</span> !'):'⚖️ <span>Égalité</span> — personne ne se mouille !'));
+  st.appendChild(el('div','subhead','«&nbsp;'+esc(S.data.prompt)+'&nbsp;»'));
+  const w=el('div','winlist');
+  Object.entries(S.data.tally).sort((a,b)=>b[1]-a[1]).forEach(([s,n])=>{ const p=px(+s);
+    const d=el('div','jokerflag'); d.style.borderColor=p.color; d.style.color=p.color;
+    d.innerHTML=p.emoji+' '+esc(p.name)+' — '+n+' vote'+(n>1?'s':''); w.appendChild(d); });
+  st.appendChild(w); gainsList(st,S.data.gains); };
+
+/* ---- PETIT BAC ÉCLAIR ---- */
+R.bac_write=st=>{ st.appendChild(el('h2','phead','🔤 '+esc(S.data.cat)+' en <span>«&nbsp;'+S.data.let+'&nbsp;»</span>'));
+  st.appendChild(el('div','subhead','Premier arrivé, premier inspiré : un mot qui commence par '+S.data.let+' !'));
+  inputRow(st,'bac_write','bw','Un mot en '+S.data.let+'…',ME.myClue);
+  dots(st,S.data.done); };
+
+R.bac_reveal=st=>{ st.appendChild(el('h2','phead',esc(S.data.cat)+' en <span>«&nbsp;'+S.data.let+'&nbsp;»</span> — verdict'));
+  const w=el('div','winlist');
+  S.data.res.forEach(r=>{ const p=px(r.slot);
+    const d=el('div','acword'+(r.valid?' match':'')); 
+    d.innerHTML=p.emoji+' «&nbsp;'+esc(r.word)+'&nbsp;» '+(r.valid?(r.unique?'<b style="color:var(--good)">✓ unique +15</b>':'<b style="color:var(--good)">✓ +10</b>'):'<b style="color:var(--bad)">✗ mauvaise lettre</b>');
+    w.appendChild(d); });
+  const abs=S.players.filter(p=>p.connected&&!S.data.res.some(r=>r.slot===p.slot));
+  abs.forEach(p=>{ const d=el('div','acword'); d.innerHTML=p.emoji+' 💨 panne d\'inspiration'; w.appendChild(d); });
+  st.appendChild(w); gainsList(st,S.data.gains); };
+
+/* ---- COMPTE ENSEMBLE ---- */
+R.coop_play=st=>{ const b=el('div','readybox');
+  b.appendChild(el('h2','phead','🤝 EXACTEMENT <span>'+S.data.target+'</span> clics à vous tous !'));
+  b.appendChild(el('div','subhead','Tolérance ±'+S.data.tol+' · coordonnez-vous au vocal · si vous dépassez, c\'est PERDU pour tout le monde'));
+  b.appendChild(el('div','ccbig','<span id="cctotal">0</span>'));
+  const btn=el('button','btn','👏 CLIQUE (<span id="ccmine">0</span>)'); btn.style.fontSize='32px';
+  let mine=0,delta=0;
+  const flush=()=>{ if(delta>0){ const n=delta; delta=0; sendHost({t:'a',a:{type:'cc',n}}); } };
+  const h=setInterval(flush,220); PK.cleanup=()=>{ clearInterval(h); flush(); };
+  btn.onclick=()=>{ mine++; delta++; SFX.click(); const e=$('#ccmine'); if(e)e.textContent=mine; };
+  b.appendChild(btn); st.appendChild(b); };
+
+R.coop_reveal=st=>{ const ok=S.data.ok;
+  st.appendChild(el('h2','phead',ok?'🤝 <span>RÉUSSITE COLLECTIVE</span> !':'💥 <span>RATÉ</span> — la coordination, c\'est pas ça…'));
+  const b=el('div','readybox');
+  const w=el('div','wordcard'+(ok?'':' imp'));
+  w.innerHTML='<div class="lbl">OBJECTIF '+S.data.target+' (±'+S.data.tol+')</div><div class="w">'+S.data.total+' clics</div>'+
+    '<div class="hint mt">'+(ok?'Tout le monde empoche +25 !':'Écart de '+Math.abs(S.data.total-S.data.target)+' — zéro point pour tout le monde.')+'</div>';
+  b.appendChild(w); gainsList(b,S.data.gains); st.appendChild(b); };
+
+/* ---- RÉFLEXE ROYALE ---- */
+R.rf_play=st=>{ const b=el('div','readybox');
+  b.appendChild(el('h2','phead','🏁 Clique dès que c\'est <span style="color:#16A34A">VERT</span> !'));
+  const zone=el('div','rfzone pause','Prépare-toi…');
+  b.appendChild(zone);
+  const info=el('div','subhead mt','Trop tôt = +1000 ms de pénalité'); b.appendChild(info);
+  st.appendChild(b);
+  const seq=S.data.delays; let i=0,total=0,state='pause',t0=0,timers=[];
+  PK.cleanup=()=>timers.forEach(clearTimeout);
+  function trial(){ if(i>=3){ zone.className='rfzone pause';
+      zone.innerHTML='TOTAL : '+total+' ms<div class="sub2">envoyé — regarde le classement arriver…</div>';
+      sendHost({t:'a',a:{type:'rf',ms:total}}); state='done'; return; }
+    state='wait'; zone.className='rfzone wait'; zone.innerHTML='ATTENDS…<div class="sub2">signal '+(i+1)+' / 3</div>';
+    timers.push(setTimeout(()=>{ state='go'; t0=performance.now(); zone.className='rfzone go'; zone.textContent='CLIQUE !!!'; },seq[i])); }
+  zone.onclick=()=>{ if(state==='wait'){ PK.cleanup(); timers=[]; total+=1000; SFX.buzz(); i++;
+      zone.className='rfzone pause'; zone.textContent='⛔ TROP TÔT ! +1000 ms'; state='pause'; timers.push(setTimeout(trial,800)); }
+    else if(state==='go'){ const ms=Math.round(performance.now()-t0); total+=ms; SFX.ding(); i++;
+      zone.className='rfzone pause'; zone.textContent='⚡ '+ms+' ms'; state='pause'; timers.push(setTimeout(trial,800)); } };
+  timers.push(setTimeout(trial,600)); };
+
+R.rf_reveal=st=>{ st.appendChild(el('h2','phead','🏁 Classement des <span>réflexes</span>'));
+  const w=el('div','standings');
+  S.data.rank.forEach((r,i)=>{ const p=px(r.slot); const d=el('div','strow');
+    d.style.animationDelay=(i*.18)+'s'; d.style.setProperty('--pc',p.color);
+    d.innerHTML='<span class="rk">'+(i+1)+'</span><span class="av">'+p.emoji+'</span><span class="nm">'+esc(p.name)+'</span>'+
+      '<span class="dpts">'+r.ms+' ms</span><span class="pts">+'+(S.data.gains[r.slot]||0)+'</span>';
+    w.appendChild(d); });
+  st.appendChild(w); };
 
 /* ---- PANIK : catalogue de micro-défis ---- */
 const PK={cleanup:null};
