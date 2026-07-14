@@ -238,6 +238,10 @@ button{font-family:inherit; cursor:pointer; border:none}
 .qdbtns .btn.stop{background:linear-gradient(160deg,#FF6B6B,#E03131); color:#fff; font-size:30px}
 .qdrisk{font-weight:900; font-size:15px; color:var(--warn); margin-top:10px}
 
+.qdrules{background:var(--panel2); border:2px solid var(--line); border-left:6px solid var(--act);
+  border-radius:14px; padding:12px 18px; font-size:15px; font-weight:700; color:var(--ink);
+  line-height:1.55; max-width:min(1000px,92vw); margin:6px 0 4px}
+
 /* ============ PANIK ============ */
 .pkwrap{position:relative; width:min(980px,94vw); flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:0}
 .pktitle{font-family:'Fredoka'; font-weight:700; font-size:min(5.4vw,54px); transform:rotate(-2.5deg);
@@ -291,6 +295,9 @@ button{font-family:inherit; cursor:pointer; border:none}
 .gitem img{width:158px; height:100px; object-fit:cover; border-radius:12px; background:#fff; border:3px solid var(--line)}
 .gitem .gcap{font-size:13px; font-weight:900; color:var(--mut); text-align:center; margin-top:4px}
 
+.wario{position:fixed; width:150px; z-index:70; pointer-events:none; border-radius:22px;
+  box-shadow:0 12px 34px rgba(0,0,0,.55); border:4px solid #B388FF; will-change:transform}
+
 /* ============ DIVERS ============ */
 #hostforce{position:fixed; bottom:16px; right:16px; z-index:60; display:none; opacity:.6}
 #hostforce:hover{opacity:1}
@@ -337,13 +344,14 @@ h2.phead span{color:var(--act)}
   <div class="hint mt">Chacun ouvre la même page sur son PC et rejoint avec ce code (vocal Discord conseillé 🎧)</div>
   <div class="lobbyrow mt" id="lobbyplayers"></div>
   <div class="actsrecap mt">
-    <div class="ar" style="--ac:#FFD023"><span class="x">1</span><h3>Tu Préfères</h3><p>3 dilemmes : vote et prédis la majorité.</p></div>
-    <div class="ar" style="--ac:#22D3EE"><span class="x">2</span><h3>Dessine ou Crève</h3><p>Chacun dessine, les autres devinent. ×2</p></div>
-    <div class="ar" style="--ac:#FF8A3D"><span class="x">3</span><h3>Quitte ou Double</h3><p>Retourne des cartes… stop ou tout perdre.</p></div>
-    <div class="ar" style="--ac:#FF3B5C"><span class="x">4</span><h3>L'Imposteur</h3><p>Indices, débat, vote… contre-attaque ! ×3</p></div>
-    <div class="ar" style="--ac:#B388FF"><span class="x">5</span><h3>PANIK !</h3><p>Micro-défis en rafale, 3 vies. Chaos final.</p></div>
+    <div class="ar" style="--ac:#FFD023"><span class="x">🎰</span><h3>Tu Préfères</h3><p>3 dilemmes : vote et prédis la majorité.</p></div>
+    <div class="ar" style="--ac:#22D3EE"><span class="x">🎰</span><h3>Dessine ou Crève</h3><p>Chacun dessine, les autres devinent. ×2</p></div>
+    <div class="ar" style="--ac:#FF8A3D"><span class="x">🎰</span><h3>Quitte ou Double</h3><p>Retourne des cartes… stop ou tout perdre.</p></div>
+    <div class="ar" style="--ac:#FF3B5C"><span class="x">🎰</span><h3>L'Imposteur</h3><p>Indices, débat, vote… contre-attaque ! ×3</p></div>
+    <div class="ar" style="--ac:#7CF7D4"><span class="x">🎰</span><h3>Indice Unique</h3><p>Coop : faites deviner sans vous doublonner.</p></div>
+    <div class="ar" style="--ac:#B388FF"><span class="x">⁉️</span><h3>??? MYSTÈRE ???</h3><p>Peut surgir après n'importe quel jeu. Points ×2. Quelqu'un vous observe…</p></div>
   </div>
-  <div class="hint mt">🃏 Chacun possède <b>1 Joker ×2</b> à dégainer avant une manche. La pression monte jusqu'au chaos final — remontada possible !</div>
+  <div class="hint mt">🎰 <b>Mode Roulette</b> : l'ordre des 5 jeux est tiré au sort · 🃏 <b>1 Joker ×2</b> chacun, à dégainer avant une manche</div>
   <div class="row mt" id="lobbyactions"></div>
 </div>
 
@@ -429,8 +437,8 @@ const DILEMMES=[
 
 const MOTS_DESSIN={
 facile:["chat","soleil","pizza","maison","banane","lunettes","fantôme","guitare","licorne","robot","fusée","cactus","arc-en-ciel","poisson","camion","glace","couronne","escargot","tortue","champignon","éclair","fromage","croissant","ballon","palmier","clé","donut","serpent","igloo","moustache","chien","vélo","étoile","cœur","lune","pomme","voiture","avion","bateau","sapin","hamburger","frites","papillon","araignée","abeille","baleine","pieuvre","girafe","éléphant","pingouin","lapin","fraise","carotte","parapluie","chapeau","échelle"],
-moyen:["plongeur","karaoké","coiffeur","boomerang","aspirateur","trampoline","sirène","vampire","ninja","pirate","cerf-volant","feu d'artifice","bonhomme de neige","moustique","jongleur","momie","télescope","sous-marin","hamac","baguette magique","château de sable","parachute","squelette","tondeuse","barbecue","funambule","dracula","cowboy","magicien","zombie","astronaute","chevalier","sorcière","clown","pompier","facteur","chef d'orchestre","tracteur","hélicoptère","montgolfière","phare","moulin à vent","cabane dans un arbre","luge","toboggan","balançoire","épouvantail","nain de jardin","boule à neige","caddie","valise","boussole","ancre","canne à pêche","arrosoir","brouette","grue de chantier"],
-difficile:["claustrophobie","jalousie","déjà-vu","karma","apéro","grasse matinée","lundi matin","influenceur","télétravail","contrôle technique","syndrome de l'imposteur","crise de la trentaine","embouteillage","gueule de bois","femme de ménage","montagnes russes","signe astrologique","procrastination","canicule","panne d'oreiller","la flemme","dimanche soir","batterie à 1 %","spoiler","mot de passe oublié","notice de montage","voisin bruyant","réunion inutile","détox digitale","file d'attente","grève des transports","selfie raté","numéro inconnu","bonne résolution","mode avion","écran bleu","pub YouTube","mise à jour","câble emmêlé","poisson d'avril"]};
+moyen:["plongeur","karaoké","coiffeur","boomerang","aspirateur","trampoline","sirène","vampire","ninja","pirate","cerf-volant","moustique","jongleur","momie","télescope","sous-marin","hamac","parachute","squelette","tondeuse","barbecue","funambule","dracula","cowboy","magicien","zombie","astronaute","chevalier","sorcière","clown","pompier","facteur","tracteur","hélicoptère","montgolfière","phare","luge","toboggan","balançoire","épouvantail","caddie","valise","boussole","ancre","arrosoir","brouette","grue","bûcheron","catapulte","périscope","labyrinthe","cheminée","fontaine","hérisson","kangourou","chauve-souris","scaphandrier"],
+difficile:["claustrophobie","jalousie","déjà-vu","karma","apéro","influenceur","télétravail","embouteillage","procrastination","canicule","spoiler","insomnie","vertige","nostalgie","gravité","écho","mirage","hypnose","migraine","allergie","illusion","tornade","éclipse","camouflage","apesanteur","somnambule","ventriloque","éternuement","bâillement","frisson","hoquet","télépathie","chuchotement","équilibriste","hibernation","sieste","seum","friendzone","ghosting","poltergeist"]};
 
 const PAIRES_IMPOSTEUR=[
 ["Croissant","Pain au chocolat"],["Plage","Piscine"],["Netflix","YouTube"],["Café","Thé"],
@@ -455,12 +463,14 @@ const PAIRES_IMPOSTEUR=[
 const COULEURS=['#FF4D8D','#22D3EE','#FFD023','#4ADE80','#FF8A3D','#B388FF','#7CF7D4','#FF6B6B'];
 const EMOJIS=['🦊','🐙','🦖','🐸','🦩','🐼','🐨','🦁'];
 const ACTES=[
- {id:'tp',   nom:'TU PRÉFÈRES',      mult:1, col:'#FFD023', desc:'Vote… et prédis la majorité !', pts:'20 pts par bonne prédiction'},
- {id:'draw', nom:'DESSINE OU CRÈVE', mult:2, col:'#22D3EE', desc:'Un crayon, quatre détectives.', pts:'points ×2'},
- {id:'qd',   nom:'QUITTE OU DOUBLE', mult:1, col:'#FF8A3D', desc:'Stop… ou encore une carte ?',  pts:'points = la somme de tes cartes'},
- {id:'imp',  nom:"L'IMPOSTEUR",      mult:3, col:'#FF3B5C', desc:'Un intrus se cache parmi vous…', pts:'points ×3'},
- {id:'panik',nom:'PANIK !',          mult:1, col:'#B388FF', desc:'Le chaos final. Survivez.',      pts:'+10 par défi réussi · bonus de survie'}];
-const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, qd_turn:8, qd_reveal:7, panik_result:3, pk:[5,5,5,4,4,4,3,3,3,3]};
+ {id:'tp',    nom:'TU PRÉFÈRES',      mult:1, col:'#FFD023', desc:'Vote… et prédis la majorité !', pts:'20 pts par bonne prédiction'},
+ {id:'draw',  nom:'DESSINE OU CRÈVE', mult:2, col:'#22D3EE', desc:'Un crayon, quatre détectives.', pts:'points ×2'},
+ {id:'qd',    nom:'QUITTE OU DOUBLE', mult:1, col:'#FF8A3D', desc:'Stop… ou encore une carte ?',  pts:'points = la somme de tes cartes'},
+ {id:'imp',   nom:"L'IMPOSTEUR",      mult:3, col:'#FF3B5C', desc:'Un intrus se cache parmi vous…', pts:'points ×3'},
+ {id:'indice',nom:'INDICE UNIQUE',    mult:1, col:'#7CF7D4', desc:'Coopérez… sans vous répéter !', pts:'devineur +25 · indice non doublonné +10'},
+ {id:'panik', nom:'PANIK !',          mult:2, col:'#B388FF', desc:'⁉️ MODE MYSTÈRE ⁉️',            pts:'TOUS LES POINTS ×2 · 3 vies'}];
+const POOL=[0,1,2,3,4]; const PANIK_IDX=5;
+const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, qd_turn:8, qd_reveal:7, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, pk:[4,4,3,3,3,3,2,2,2,2,2,2]};
 const PTS={pred:20, drawFind:[30,10], drawArtist:10, impCatch:20, impEscape:50, impConsol:10};
 
 /* ================================================================
@@ -515,6 +525,17 @@ async function flash(big,sub='',col='#FFD023',ms=2200){ const f=$('#flash');
   f.style.background=col; $('#flashbig').innerHTML=big; $('#flashsub').innerHTML=sub;
   $('#flashsub').style.display=sub?'block':'none'; f.classList.add('on'); SFX.woosh();
   await delay(ms); f.classList.remove('on'); }
+async function roulette(a){ const f=$('#flash'); f.style.background='#1B0F38'; f.classList.add('on');
+  const b=$('#flashbig'), s=$('#flashsub');
+  s.style.display='block'; s.style.color='#F5EFFF'; s.innerHTML='JEU '+a.num+' / '+a.total+' — 🎰 la roulette tourne…';
+  let i=rnd(POOL.length);
+  const show=()=>{ const g=ACTES[POOL[i]]; b.innerHTML='<span style="color:'+g.col+'">'+g.nom+'</span>'; };
+  const spins=14+rnd(5);
+  for(let k=0;k<spins;k++){ i=(i+1)%POOL.length; show(); SFX.tick(); await delay(55+k*16); }
+  while(POOL[i]!==a.pick){ i=(i+1)%POOL.length; show(); SFX.tick(); await delay(300); }
+  SFX.ding(); f.style.background=ACTES[a.pick].col;
+  b.innerHTML='<span style="color:#1B0F38">'+ACTES[a.pick].nom+'</span>';
+  s.innerHTML=''; await delay(950); f.classList.remove('on'); s.style.color=''; }
 async function countdown(){ const f=$('#flash'); f.style.background='#1B0F38'; f.classList.add('on');
   $('#flashsub').style.display='none'; const b=$('#flashbig');
   for(const n of ['3','2','1']){ b.innerHTML='<span class="count" style="color:#FFD023">'+n+'</span>'; SFX.tick(); await delay(750);}
@@ -583,10 +604,11 @@ function endPhaseEarly(){ if(!phaseResolve)return; stopTimer(); const r=phaseRes
 function connectedSlots(){ return H.players.filter(p=>p.connected).map(p=>p.slot); }
 function addPts(slot,base){ const mult=H.actIdx>=0?ACTES[H.actIdx].mult:1; const jk=H.jokerArm[slot]?2:1;
   const v=base*mult*jk; const p=H.players.find(x=>x.slot===slot); if(p)p.score+=v; return v; }
-function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,qd:0,pk:0}; H.stats[slot][k]+=v; }
+function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,qd:0,pk:0,ind:0}; H.stats[slot][k]+=v; }
 
 /* fx synchronisé (flash / compte à rebours) */
-function fxAll(kind,a){ bcast({t:'fx',kind,a}); return kind==='count'?countdown():flash(a.big,a.sub,a.col,a.ms); }
+function fxAll(kind,a){ bcast({t:'fx',kind,a});
+  return kind==='count'?countdown():(kind==='roulette'?roulette(a):flash(a.big,a.sub,a.col,a.ms)); }
 
 /* ================================================================
    HÔTE : connexions & routage
@@ -632,6 +654,8 @@ function hostHandle(slot,m){
   if(H.phase==='imp_guess'&&a.type==='cguess'){ impCounter(slot,a.w); return; }
   if(H.phase==='imp_debate'&&a.type==='rdy'){ impRdy(slot); return; }
   if(H.phase==='qd_turn'&&a.type==='qd'){ qdChoose(slot,a.go); return; }
+  if(H.phase==='ind_write'&&a.type==='ind_c'){ indClue(slot,a.w); return; }
+  if(H.phase==='ind_guess'&&a.type==='ind_g'){ indGuess(slot,a.w); return; }
   if(H.phase==='panik_round'&&a.type==='pk'){ pkReport(slot,a.ok); return; }
 }
 function impRdy(slot){ const I=H.secret.imp; if(!I||I.rdy[slot])return; I.rdy[slot]=true;
@@ -646,7 +670,7 @@ function impCounter(slot,w){ const I=H.secret.imp; if(!I||slot!==I.imposter||I.g
 function clientOnData(m){ switch(m.t){
   case 'st': S=m.s; ME=m.me; render(); break;
   case 'tick': tickUI(m.rem,m.total); break;
-  case 'fx': if(m.kind==='count')countdown(); else flash(m.a.big,m.a.sub,m.a.col,m.a.ms); break;
+  case 'fx': if(m.kind==='count')countdown(); else if(m.kind==='roulette')roulette(m.a); else flash(m.a.big,m.a.sub,m.a.col,m.a.ms); break;
   case 'segs': case 'cv': cvOnMsg(m); break;
   case 'chat': feedAdd(m); break;
   case 'nope': toast('❌ '+m.msg,4000); $('#joinhint').innerHTML=m.msg; NET.alive=false; break;
@@ -658,17 +682,28 @@ function clientOnData(m){ switch(m.t){
 async function runTournament(){
   H.actIdx=-1; H.players.forEach(p=>{p.score=0;p.joker=true;}); H.stats={}; H.lastScores={};
   // usedWords / usedPairs / usedDil persistent entre les tournois de la soirée (recyclage auto si épuisé)
-  await fxAll('flash',{big:'QUE LE TOURNOI<br>COMMENCE&nbsp;!',sub:'3 actes · les points grimpent · gardez votre joker 🃏',col:'#B388FF',ms:2800});
-  for(let a=0;a<ACTES.length;a++){ H.actIdx=a; const act=ACTES[a];
-    await fxAll('flash',{big:'ACTE '+(a+1)+'<br>'+act.nom,sub:act.desc+' · '+act.pts,col:act.col,ms:2900});
-    if(act.id==='tp')await runTP();
-    if(act.id==='draw')await runDraw();
-    if(act.id==='qd')await runQD();
-    if(act.id==='imp')await runImp();
-    if(act.id==='panik')await runPanik();
-    if(a<ACTES.length-1)await showScoreboard(a);
+  await fxAll('flash',{big:'QUE LE TOURNOI<br>COMMENCE&nbsp;!',sub:'🎰 Mode Roulette · un mode mystère rôde · gardez votre joker 🃏',col:'#B388FF',ms:2800});
+  const ordre=shuffle(POOL);
+  const panikApres=rnd(ordre.length);   // le mystère surgit après ce jeu (jamais avant le 1er)
+  for(let g=0;g<ordre.length;g++){ const ai=ordre[g];
+    await fxAll('roulette',{num:g+1,total:ordre.length,pick:ai});
+    H.actIdx=ai; const act=ACTES[ai];
+    await fxAll('flash',{big:act.nom,sub:act.desc+' · '+act.pts,col:act.col,ms:2400});
+    await runAct(act.id);
+    if(g===panikApres){ H.actIdx=PANIK_IDX;
+      SFX.buzz();
+      await fxAll('flash',{big:'⁉️ MODE MYSTÈRE ⁉️<br>PANIK !',sub:'TOUS LES POINTS ×2 · 3 vies · il arrive…',col:'#B388FF',ms:3000});
+      await runPanik(); }
+    if(g<ordre.length-1)await showScoreboard(g);
   }
   showPodium();
+}
+async function runAct(id){
+  if(id==='tp')await runTP();
+  if(id==='draw')await runDraw();
+  if(id==='qd')await runQD();
+  if(id==='imp')await runImp();
+  if(id==='indice')await runIndice();
 }
 async function readyPhase(label){ H.roundLabel=label; H.jokerArm={};
   await setPhase('ready',DUREES.ready,{label});
@@ -789,13 +824,52 @@ async function qdManche(){
   slots.forEach(s=>{ const P=Q.p[s]; if(P.banked>0){ gains[s]=addPts(s,P.banked); stat(s,'qd',P.banked); } });
   SFX.reveal();
   await setPhase('qd_reveal',DUREES.qd_reveal,
-    {res:slots.map(s=>({slot:s,cards:Q.p[s].cards,status:Q.p[s].status,banked:Q.p[s].banked,last:Q.p[s].last})),gains,flip7:Q.flip7});
+    {res:slots.map(s=>({slot:s,cards:Q.p[s].cards,sum:Q.p[s].sum,status:Q.p[s].status,banked:Q.p[s].banked,last:Q.p[s].last})),gains,flip7:Q.flip7});
 }
 function qdChoose(slot,go){ const Q=H.secret.qd; if(!Q||H.phase!=='qd_turn')return;
   const P=Q.p[slot]; if(!P||P.status!=='in')return;
   Q.choices[slot]=!!go; H.pubData.done=Object.keys(Q.choices).map(Number); push();
   const need=connectedSlots().filter(s=>Q.p[s]&&Q.p[s].status==='in');
   if(need.every(s=>Q.choices[s]!=null))endPhaseEarly(); }
+
+/* ================================================================
+   INDICE UNIQUE (logique hôte) — façon Just One, coop à scoring hybride
+================================================================ */
+async function runIndice(){ const order=shuffle(connectedSlots());
+  for(let r=0;r<order.length;r++){ H.roundLabel='Mot '+(r+1)+' / '+order.length;
+    await readyPhase(H.roundLabel); await indiceRound(order[r]); } }
+async function indiceRound(guesser){
+  const word=pickWord(pick(['facile','moyen']));
+  const N={guesser,word,clues:{},guess:null}; H.secret.ind=N;
+  await setPhase('ind_write',DUREES.ind_write,{guesser,done:[]},
+    s=>s===guesser?{isGuesser:true}:{word,myClue:N.clues[s]||null});
+  // Déduplication façon Just One : indices identiques annulés, indices invalides annulés
+  const groups={};
+  Object.entries(N.clues).forEach(([s,c])=>{ const k=norm(c); (groups[k]=groups[k]||[]).push(+s); });
+  N.valid={}; N.cancel={};
+  Object.entries(groups).forEach(([k,ss])=>{
+    const bad=ss.length>1||k===norm(word)||k.includes(norm(word))||norm(word).includes(k);
+    ss.forEach(s=>{ if(bad)N.cancel[s]=N.clues[s]; else N.valid[s]=N.clues[s]; }); });
+  const cluesPub=Object.entries(N.valid).map(([s,c])=>({slot:+s,clue:c}));
+  const cancelled=Object.keys(N.cancel).map(Number);
+  await setPhase('ind_guess',DUREES.ind_guess,{guesser,clues:cluesPub,cancelled,guessed:false},
+    s=>s===guesser?{isGuesser:true}:{word});
+  const ok=!!(N.guess&&(norm(N.guess)===norm(word)||lev1(norm(N.guess),norm(word))));
+  const gains={};
+  if(ok){ gains[guesser]=addPts(guesser,25); stat(guesser,'ind',2);
+    Object.keys(N.valid).forEach(s=>{ gains[s]=addPts(+s,10); stat(+s,'ind'); }); }
+  SFX.reveal();
+  await setPhase('ind_reveal',DUREES.ind_reveal,
+    {guesser,word,guess:N.guess,ok,gains,cancelled,clues:cluesPub});
+}
+function indClue(slot,w){ const N=H.secret.ind; if(!N||H.phase!=='ind_write'||slot===N.guesser||N.clues[slot])return;
+  w=(w||'').trim().slice(0,20); if(!w)return;
+  if(/\s/.test(w)){ sendSlot(slot,{t:'chat',kind:'sys',text:'❌ UN SEUL mot pour ton indice !'}); return; }
+  N.clues[slot]=w; H.pubData.done=Object.keys(N.clues).map(Number); push();
+  const need=connectedSlots().filter(s=>s!==N.guesser);
+  if(need.every(s=>N.clues[s]))endPhaseEarly(); }
+function indGuess(slot,w){ const N=H.secret.ind; if(!N||H.phase!=='ind_guess'||slot!==N.guesser||N.guess)return;
+  w=(w||'').trim().slice(0,30); if(!w)return; N.guess=w; endPhaseEarly(); }
 
 /* ================================================================
    PANIK ! (logique hôte) — micro-défis façon WarioWare
@@ -871,7 +945,8 @@ async function impRound(){
   await setPhase('imp_reveal',DUREES.reveal+5,{imposter,wordC:I.wordC,wordI:I.wordI,votes:I.votes,caught,counter,guess:I.guess,gains});
 }
 function impClue(slot,w){ const I=H.secret.imp; if(!I||H.phase!=='imp_clue'||I.clues[slot])return;
-  w=(w||'').trim().slice(0,24); if(!w)return;
+  w=(w||'').trim().replace(/\s+/g,' ').slice(0,40); if(!w)return;
+  if(w.split(' ').length>3){ sendSlot(slot,{t:'chat',kind:'sys',text:'❌ 3 mots maximum pour ton indice !'}); return; }
   const mine=slot===I.imposter?I.wordI:I.wordC;
   if(norm(w).includes(norm(mine))){ sendSlot(slot,{t:'chat',kind:'sys',text:'❌ Interdit : ton indice contient ton mot !'}); return; }
   I.clues[slot]=w; H.pubData.done=Object.keys(I.clues).map(Number); push();
@@ -899,6 +974,7 @@ function computeTitles(){ const out=[];
   best('det','Détective · flaire les intrus','👮');
   best('qd','Sang froid · roi du stop-ou-encore','🧊');
   best('pk','Nerfs d\'acier · survivant du chaos','⚡');
+  best('ind','Muse · indices qui font mouche','💡');
   return out; }
 
 /* ================================================================
@@ -913,7 +989,7 @@ function tickUI(rem,total){ const f=$('#timerfill'),b=$('#timerbar');
 function renderHUD(){ if(!S)return;
   const act=S.actIdx>=0?ACTES[S.actIdx]:null;
   document.documentElement.style.setProperty('--act',act?act.col:'#FFD023');
-  $('#hudact').textContent=act?('ACTE '+(S.actIdx+1)+' · '+act.nom):'—';
+  $('#hudact').textContent=act?(S.actIdx===PANIK_IDX?'⁉️ '+act.nom+' — ×2':act.nom):'—';
   $('#hudact').style.color=act?act.col:'var(--act)';
   $('#actbadge').style.borderColor=act?act.col:'var(--line)';
   $('#hudround').textContent=(S.roundLabel||'')+(act&&act.mult>1?' · points ×'+act.mult:'');
@@ -989,11 +1065,12 @@ function render(){ if(!S)return;
   screen(null); renderHUD();
   const key=S.phase+':'+(S.data?.drawer??'')+':'+S.roundLabel;
   if(S.phase==='draw_live'&&lastKey===key){ drawLiveUpdate(); return; }
-  if(S.phase==='imp_clue'&&lastKey===key&&!ME.myClue){ const dr=$('#dotsrow');
+  if((S.phase==='imp_clue'||S.phase==='ind_write')&&lastKey===key&&!ME.myClue){ const dr=$('#dotsrow');
     if(dr){ dr.remove(); dots($('#stage'),S.data.done); } return; }
   if(lastKey.startsWith('draw_live')&&S.phase==='draw_reveal'&&CV.cvs){
     try{ GALLERY.push({img:CV.cvs.toDataURL('image/png'),word:S.data.word,drawer:S.data.drawer}); }catch(e){} }
   lastKey=key; if(PK.cleanup){ PK.cleanup(); PK.cleanup=null; }
+  if(S.phase&&S.phase.startsWith('panik'))warioEnsure(1+Math.floor((S.data.wave||1)/4)); else warioStop();
   const st=$('#stage'); st.innerHTML=''; st.style.overflowY='hidden';
   (R[S.phase]||(()=>{}))(st); }
 
@@ -1124,12 +1201,18 @@ function qdBoards(st,boards,revealMode){ const g=el('div','qdgrid');
       cards.appendChild(el('div','qdc'+(isLast?' new':''),v)); });
     if(b.last&&b.last.bust)cards.appendChild(el('div','qdc dup',b.last.card));
     c.appendChild(cards);
-    c.appendChild(el('div','sum',(b.status==='bust'?0:b.sum)+(b.status==='f7'?' +15':'')+' pts'));
+    c.appendChild(el('div','sum',(b.status==='bust'?0:(b.sum??b.banked??0))+(b.status==='f7'?' +15':'')+' pts'));
     c.appendChild(el('div','stat',b.status==='in'?'🎲 en jeu':(b.status==='stop'?'✋ sécurisé':(b.status==='f7'?'🌟 FLIP 7':'💥'))));
     g.appendChild(c); });
   st.appendChild(g); }
 
 R.qd_turn=st=>{ st.appendChild(el('h2','phead','Tour <span>'+S.data.turn+'</span> — stop ou encore ?'));
+  if(S.data.turn===1)st.appendChild(el('div','qdrules',
+    '📖 <b>Ton paquet</b> : une carte «1», deux «2», trois «3»… douze «12». '+
+    '🔥 <b>ENCORE</b> = tu retournes la carte du dessus de TON paquet. '+
+    'Retourner deux fois la même valeur = 💥 <b>BUST</b>, tu perds tout ce que tu as accumulé dans la manche. '+
+    '✋ <b>JE M\'ARRÊTE</b> = ta somme est sécurisée définitivement. '+
+    '🌟 <b>7 cartes différentes = FLIP 7</b> : +15 pts et la manche s\'arrête immédiatement pour TOUT LE MONDE.'));
   qdBoards(st,S.data.boards);
   if(ME.qdIn){ const b=el('div','qdbtns');
     const enc=el('button','btn encore','🔥 ENCORE');
@@ -1157,12 +1240,12 @@ R.imp_word=st=>{ const c=el('div','wordcard');
   st.lastChild.appendChild(c);
   st.lastChild.appendChild(el('div','hint mt','🤫 Mémorise-le. L\'un de vous a un mot différent… et personne ne sait si c\'est lui.')); };
 
-R.imp_clue=st=>{ st.appendChild(el('h2','phead','Donne <span>UN indice</span> sur ton mot'));
+R.imp_clue=st=>{ st.appendChild(el('h2','phead','Donne <span>ton indice</span> — 3 mots max'));
   st.appendChild(el('div','subhead','Ton mot : « '+esc(ME.word)+' » — sois précis, mais pas trop… l\'imposteur écoute 👀'));
   const b=el('div','readybox mt');
   if(ME.myClue)b.appendChild(el('div','jokerflag','✔ Indice envoyé : « '+esc(ME.myClue)+' »'));
   else{ const row=el('div','row');
-    const inp=el('input','field'); inp.maxLength=24; inp.placeholder='Un mot ou deux…'; inp.style.width='340px';
+    const inp=el('input','field'); inp.maxLength=40; inp.placeholder='Jusqu\'à 3 mots…'; inp.style.width='380px';
     const go=el('button','btn sm','Envoyer');
     const send=()=>{ const v=inp.value.trim(); if(!v)return; sendHost({t:'a',a:{type:'clue',w:v}}); };
     go.onclick=send; inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
@@ -1235,14 +1318,87 @@ R.imp_reveal=st=>{ const imp=px(S.data.imposter); const c=S.data.caught;
   gainsList(b,S.data.gains);
   st.appendChild(b); if(c)SFX.found(); else SFX.buzz(); };
 
+/* ---- INDICE UNIQUE ---- */
+R.ind_write=st=>{ const g=px(S.data.guesser);
+  if(ME.isGuesser){ const b=el('div','readybox');
+    b.appendChild(el('h2','phead','C\'est TOI qui <span>devines</span> !'));
+    b.appendChild(el('div','rsub','Les autres écrivent chacun UN mot d\'indice…<br>⚠️ Les indices identiques s\'annuleront avant que tu les voies !'));
+    st.appendChild(b); dots(st,S.data.done); return; }
+  st.appendChild(el('h2','phead','Fais deviner à <span>'+esc(g.name)+'</span> '+g.emoji));
+  st.appendChild(el('div','subhead','Le mot : «&nbsp;'+esc(ME.word)+'&nbsp;» — UN SEUL mot d\'indice. Original mais pas trop : les doublons s\'annulent !'));
+  const b=el('div','readybox mt');
+  if(ME.myClue)b.appendChild(el('div','jokerflag','✔ Indice envoyé : «&nbsp;'+esc(ME.myClue)+'&nbsp;»'));
+  else{ const row=el('div','row');
+    const inp=el('input','field'); inp.maxLength=20; inp.placeholder='Un seul mot…'; inp.style.width='320px';
+    const go=el('button','btn sm','Envoyer');
+    const send=()=>{ const v=inp.value.trim(); if(!v)return; sendHost({t:'a',a:{type:'ind_c',w:v}}); };
+    go.onclick=send; inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+    row.appendChild(inp); row.appendChild(go); b.appendChild(row);
+    setTimeout(()=>inp.focus(),150); }
+  st.appendChild(b); dots(st,S.data.done); };
+
+function indClueGrid(st){ const g=el('div','cluegrid');
+  S.data.clues.forEach(cl=>{ const p=px(cl.slot); const c=el('div','cluecard');
+    c.style.setProperty('--pc',p.color);
+    c.innerHTML='<div class="who">'+p.emoji+' '+esc(p.name)+'</div><div class="cw">«&nbsp;'+esc(cl.clue)+'&nbsp;»</div>';
+    g.appendChild(c); });
+  (S.data.cancelled||[]).forEach(s=>{ const p=px(s); const c=el('div','cluecard'); c.style.setProperty('--pc',p.color);
+    c.style.opacity='.45';
+    c.innerHTML='<div class="who">'+p.emoji+' '+esc(p.name)+'</div><div class="cw wait">❌ doublon !</div>';
+    g.appendChild(c); });
+  st.appendChild(g); }
+
+R.ind_guess=st=>{ const g=px(S.data.guesser);
+  if(ME.isGuesser){ st.appendChild(el('h2','phead','À toi : quel est <span>le mot</span> ?'));
+    indClueGrid(st);
+    const b=el('div','readybox mt'); const row=el('div','row');
+    const inp=el('input','field'); inp.maxLength=30; inp.placeholder='Le mot, c\'est…'; inp.style.width='340px';
+    const go=el('button','btn sm good','DEVINER');
+    const send=()=>{ const v=inp.value.trim(); if(!v)return; sendHost({t:'a',a:{type:'ind_g',w:v}}); };
+    go.onclick=send; inp.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+    row.appendChild(inp); row.appendChild(go); b.appendChild(row); st.appendChild(b);
+    setTimeout(()=>inp.focus(),150); return; }
+  st.appendChild(el('h2','phead',esc(g.name)+' '+g.emoji+' <span>réfléchit…</span>'));
+  st.appendChild(el('div','subhead','Le mot était : «&nbsp;'+esc(ME.word)+'&nbsp;». Croisez les doigts 🤞'));
+  indClueGrid(st); };
+
+R.ind_reveal=st=>{ const g=px(S.data.guesser); const ok=S.data.ok;
+  st.appendChild(el('h2','phead',ok?'🎯 <span>TROUVÉ</span> !':'💨 <span>RATÉ</span>…'));
+  const b=el('div','readybox');
+  const w=el('div','wordcard'+(ok?'':' imp'));
+  w.innerHTML='<div class="lbl">LE MOT ÉTAIT</div><div class="w">'+esc(S.data.word)+'</div>'+
+    '<div class="hint mt">'+esc(g.name)+' a proposé : «&nbsp;'+esc(S.data.guess||'…rien du tout')+'&nbsp;»</div>'+
+    ((S.data.cancelled||[]).length?'<div class="hint">'+S.data.cancelled.length+' indice(s) annulé(s) pour doublon 🤦</div>':'');
+  b.appendChild(w); gainsList(b,S.data.gains); st.appendChild(b);
+  if(ok)SFX.found(); else SFX.buzz(); };
+
 /* ---- PANIK : catalogue de micro-défis ---- */
 const PK={cleanup:null};
+const WARIO_IMG='data:image/jpeg;base64,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';
+const WARIO={list:[],raf:null};
+function warioEnsure(n){ n=Math.max(1,Math.min(3,n));
+  while(WARIO.list.length>n){ const w=WARIO.list.pop(); w.el.remove(); }
+  while(WARIO.list.length<n){ const im=el('img','wario'); im.src=WARIO_IMG;
+    im.style.width=(120+rnd(70))+'px'; document.body.appendChild(im);
+    WARIO.list.push({el:im,x:10+rnd(60),y:10+rnd(50),
+      vx:(0.25+Math.random()*0.35)*(rnd(2)?1:-1), vy:(0.2+Math.random()*0.3)*(rnd(2)?1:-1),
+      r:rnd(360), vr:(1.5+Math.random()*2.5)*(rnd(2)?1:-1)}); }
+  if(!WARIO.raf)warioStep(); }
+function warioStep(){ WARIO.raf=requestAnimationFrame(warioStep);
+  WARIO.list.forEach(w=>{ w.x+=w.vx; w.y+=w.vy; w.r+=w.vr;
+    if(w.x<=0||w.x>=86){w.vx*=-1; w.x=Math.max(0,Math.min(86,w.x));}
+    if(w.y<=0||w.y>=78){w.vy*=-1; w.y=Math.max(0,Math.min(78,w.y));}
+    w.el.style.transform='translate('+w.x+'vw,'+w.y+'vh) rotate('+w.r+'deg)'; }); }
+function warioStop(){ if(WARIO.raf){cancelAnimationFrame(WARIO.raf); WARIO.raf=null;}
+  WARIO.list.forEach(w=>w.el.remove()); WARIO.list=[]; }
 const PK_COLS=['#FF4D8D','#22A9EE','#FFD023','#FF8A3D','#B388FF','#F472B6','#94A3B8'];
 const PK_DEFIS={
  green:{ title:()=>'CLIQUE LE ROND <span style="color:#4ADE80">VERT</span> !',
-  gen(w){ const dots=[]; const n=6+Math.min(6,w);
-    for(let i=0;i<n;i++)dots.push({x:6+rnd(84),y:8+rnd(74),r:34+rnd(26),c:pick(PK_COLS)});
-    dots[rnd(n)].c='#22c55e'; return {dots}; },
+  gen(w){ const dots=[]; const n=8+Math.min(8,w);
+    for(let i=0;i<n;i++)dots.push({x:5+rnd(86),y:6+rnd(76),r:26+rnd(20),c:pick(PK_COLS)});
+    const gi=rnd(n); dots[gi].c='#22c55e';
+    if(w>=4)dots[(gi+1+rnd(n-1))%n].c='#84CC16';   // leurre vert-citron vicieux
+    return {dots}; },
   run(z,p,done){ p.dots.forEach(d=>{ const e=el('div','pkdot');
     e.style.cssText='left:'+d.x+'%;top:'+d.y+'%;width:'+d.r+'px;height:'+d.r+'px;background:'+d.c;
     e.onclick=()=>done(d.c==='#22c55e'); z.appendChild(e); }); } },
@@ -1251,23 +1407,25 @@ const PK_DEFIS={
   run(z,p,done){ const b=el('button','pkbig','CLIQUE-MOI 😈'); b.onclick=()=>done(false); z.appendChild(b);
     const h=setTimeout(()=>done(true),Math.max(600,(p.dur-0.8)*1000)); PK.cleanup=()=>clearTimeout(h); } },
  type:{ title:p=>'TAPE : «&nbsp;'+esc(p.w)+'&nbsp;»',
-  gen(){ return {w:pick(['saucisse','chaussette','cornichon','tartiflette','pamplemousse','trottinette','moustache','citrouille'])}; },
+  gen(w){ const easy=['saucisse','chaussette','cornichon','moustache','citrouille'];
+    const hard=['tartiflette','pamplemousse','trottinette','hippopotame','extraterrestre','anticyclone'];
+    return {w:pick(w<6?easy:hard)}; },
   run(z,p,done){ const i=el('input','field pkinput'); i.autocomplete='off'; z.appendChild(i); i.focus();
     i.addEventListener('keydown',e=>{ if(e.key==='Enter')done(norm(i.value)===norm(p.w)); }); } },
  memory:{ title:()=>'MÉMORISE… PUIS TAPE !',
-  gen(w){ let c=''; for(let i=0;i<(w<5?3:4);i++)c+=rnd(10); return {code:c}; },
+  gen(w){ let c=''; for(let i=0;i<(w<3?3:4);i++)c+=rnd(10); return {code:c}; },
   run(z,p,done){ const d=el('div','pkok',p.code.split('').join(' ')); d.style.color='#FFD023'; z.appendChild(d);
     const h=setTimeout(()=>{ d.remove(); const i=el('input','field pkinput'); i.autocomplete='off';
       z.appendChild(i); i.focus();
-      i.addEventListener('keydown',e=>{ if(e.key==='Enter')done(i.value.trim()===p.code); }); },1200);
+      i.addEventListener('keydown',e=>{ if(e.key==='Enter')done(i.value.trim()===p.code); }); },900);
     PK.cleanup=()=>clearTimeout(h); } },
  mash:{ title:p=>'CLIQUE '+p.n+' FOIS !',
-  gen(w){ return {n:10+w*2}; },
+  gen(w){ return {n:Math.min(10+2*w,Math.round((DUREES.pk[w-1]||2)*6.5))}; },
   run(z,p,done){ let k=0; const b=el('button','pkbig','0 / '+p.n);
     b.onclick=()=>{ k++; b.textContent=k+' / '+p.n; SFX.click(); if(k>=p.n)done(true); };
     z.appendChild(b); } },
  gauge:{ title:()=>'STOP DANS LA <span style="color:#4ADE80">ZONE</span> !',
-  gen(w){ const zw=22-Math.min(10,w*1.5); const zx=8+rnd(Math.max(1,84-zw)); return {zx,zw,sp:0.9+w*0.12}; },
+  gen(w){ const zw=Math.max(7,20-w*1.2); const zx=8+rnd(Math.max(1,84-zw)); return {zx,zw,sp:1.2+w*0.18}; },
   run(z,p,done){ const t=el('div','pkgaugetrack');
     t.innerHTML='<div class="pkgaugezone" style="left:'+p.zx+'%;width:'+p.zw+'%"></div><div class="pkgaugecur" id="pkcur"></div>';
     z.appendChild(t); let x=0,dir=1,run=true; const cur=t.querySelector('#pkcur');
@@ -1287,8 +1445,9 @@ const PK_DEFIS={
     [p.a,p.b].forEach(v=>{ const b=el('button','btn',v); b.onclick=()=>done(v===Math.max(p.a,p.b)); c.appendChild(b); });
     z.appendChild(c); } },
  count:{ title:p=>'COMBIEN DE '+p.emo+' ?',
-  gen(w){ const emo=pick(['🦆','🐸','🍕','👻','🦖']); const decoy=pick(['🐔','🐢','🍔','🎃','🦕']);
-    const n=4+rnd(5), nd=3+rnd(4), pos=[];
+  gen(w){ const pairs=[['🦆','🐔'],['🐸','🐢'],['🍕','🍔'],['👻','🎃'],['🦖','🦕']];
+    const [emo,decoy]=pick(pairs);
+    const n=5+rnd(6), nd=4+rnd(5), pos=[];
     for(let i=0;i<n+nd;i++)pos.push({x:5+rnd(88),y:5+rnd(80),e:i<n?emo:decoy});
     return {emo,n,pos:shuffle(pos),ch:shuffle([n,n-1,n+1])}; },
   run(z,p,done){ p.pos.forEach(o=>{ const e=el('div','pkemoji',o.e); e.style.cssText='left:'+o.x+'%;top:'+o.y+'%'; z.appendChild(e); });
@@ -1296,8 +1455,8 @@ const PK_DEFIS={
     p.ch.forEach(v=>{ const b=el('button','btn sm',v); b.onclick=()=>done(v===p.n); c.appendChild(b); });
     z.appendChild(c); } },
  math:{ title:p=>esc(p.q)+' = ?',
-  gen(){ const a=3+rnd(9),b=3+rnd(9); const op=pick(['+','×']); const ans=op==='+'?a+b:a*b;
-    return {q:a+' '+op+' '+b,ans,ch:shuffle([ans,ans+pick([1,2,-1]),ans+pick([3,-2,10])])}; },
+  gen(){ const a=4+rnd(9),b=4+rnd(9); const op=pick(['+','×','−']); const ans=op==='+'?a+b:(op==='×'?a*b:a-b);
+    return {q:a+' '+op+' '+b,ans,ch:shuffle([ans,ans+pick([1,-1]),ans+pick([2,-2])])}; },
   run(z,p,done){ const c=el('div','pkchoice');
     [...new Set(p.ch)].forEach(v=>{ const b=el('button','btn',v); b.onclick=()=>done(v===p.ans); c.appendChild(b); });
     z.appendChild(c); } }
@@ -1335,7 +1494,7 @@ R.panik_end=st=>{ st.appendChild(el('h2','phead','FIN DU <span>CHAOS</span> !'))
   confetti(); };
 
 /* ---- SCOREBOARD / PODIUM ---- */
-R.scoreboard=st=>{ st.appendChild(el('h2','phead','Classement après l\'acte <span>'+(S.data.actDone+1)+'</span>'));
+R.scoreboard=st=>{ st.appendChild(el('h2','phead','Classement après le jeu <span>'+(S.data.actDone+1)+'</span>'));
   const w=el('div','standings');
   S.data.rows.forEach((r,i)=>{ const p=px(r.slot); const d=el('div','strow');
     d.style.animationDelay=(i*.18)+'s'; d.style.setProperty('--pc',p.color);
@@ -1343,8 +1502,7 @@ R.scoreboard=st=>{ st.appendChild(el('h2','phead','Classement après l\'acte <sp
       '<span class="dpts">'+(r.delta>0?'+'+r.delta:'—')+'</span><span class="pts">'+p.score+'</span>';
     w.appendChild(d); });
   st.appendChild(w);
-  const nx=ACTES[S.data.actDone+1];
-  st.appendChild(el('div','subhead mt','Prochain acte : '+nx.nom+' — tout reste possible !')); };
+  st.appendChild(el('div','subhead mt','Prochain jeu : 🎰 la roulette décide… et le mode mystère rôde !')); };
 
 R.podium=st=>{ tickUI(null,0); SFX.fanfare(); confetti(); st.style.overflowY='auto';
   st.appendChild(el('h2','phead','🏆 PODIUM <span>FINAL</span> 🏆'));
