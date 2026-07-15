@@ -10,7 +10,7 @@
 /* ============ TOKENS ============ */
 :root{
   --bg0:#150C2E; --bg1:#221349; --panel:#2A1856; --panel2:#37236B; --panel3:#432E80;
-  --ink:#F5EFFF; --mut:#A493D8; --line:#43307E;
+  --ink:#F5EFFF; --mut:#BFB2E8; --line:#43307E;
   --act:#FFD023;
   --good:#4ADE80; --bad:#FF3B5C; --warn:#FFB020;
   --p0:#FF4D8D; --p1:#22D3EE; --p2:#FFD023; --p3:#4ADE80; --p4:#FF8A3D; --p5:#B388FF; --p6:#7CF7D4; --p7:#FF6B6B;
@@ -60,12 +60,12 @@ button{font-family:inherit; cursor:pointer; border:none}
 .field{width:100%; background:var(--bg0); border:2px solid var(--line); color:var(--ink);
   border-radius:16px; padding:14px 18px; font-size:20px; font-weight:700; outline:none; text-align:center}
 .field:focus{border-color:var(--act)}
-.hint{color:var(--mut); font-size:14.5px; line-height:1.45}
+.hint{color:var(--mut); font-size:15.5px; line-height:1.45}
 
 /* ============ ACCUEIL ============ */
 #home .logo{font-size:min(9.5vw,118px); font-weight:700; line-height:.95; transform:rotate(-2.5deg);
   text-shadow:0 6px 0 rgba(0,0,0,.35), 0 0 60px rgba(255,208,35,.25)}
-#home .logo b{color:var(--p2)} #home .logo i{color:var(--p1);font-style:normal} #home .logo u{color:var(--p0);text-decoration:none}
+#home .logo b{color:var(--p2)} #home .logo .r{color:var(--p1)} #home .logo u{color:var(--p0);text-decoration:none}
 #home .tag{color:var(--mut); font-size:20px; margin:10px 0 40px; font-weight:700}
 .homegrid{display:grid; grid-template-columns:1fr 1fr; gap:26px; width:min(880px,92vw)}
 .homegrid .card{display:flex; flex-direction:column; gap:16px; align-items:center; text-align:center}
@@ -347,7 +347,7 @@ body.mystery #mysteryveil{display:block}
 .racelane{position:relative; height:58px; background:linear-gradient(90deg,var(--panel),var(--panel2)); 
   border:2px solid var(--line); border-radius:999px; overflow:visible}
 .racelane .flag{position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:26px; opacity:.85}
-.racelane .lanename{position:absolute; left:14px; top:-9px; font-size:12px; font-weight:900; color:var(--lc); 
+.racelane .lanename{position:absolute; left:14px; top:-9px; font-size:13px; font-weight:900; color:var(--lc); 
   background:var(--bg0); padding:1px 10px; border-radius:999px; border:1.5px solid var(--lc)}
 .racer{position:absolute; left:0; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:50%;
   background:var(--lc); display:flex; align-items:center; justify-content:center; font-size:25px;
@@ -357,7 +357,7 @@ body.mystery #mysteryveil{display:block}
 .raftlane{position:relative; height:66px; background:linear-gradient(90deg,#0B3B4A,#0E4F63); border:2px solid #1B6E85;
   border-radius:999px; overflow:visible}
 .raftlane .flag{position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:26px}
-.raftlane .lanename{position:absolute; left:14px; top:-10px; font-size:12px; font-weight:900; color:var(--lc);
+.raftlane .lanename{position:absolute; left:14px; top:-10px; font-size:13px; font-weight:900; color:var(--lc);
   background:var(--bg0); padding:1px 10px; border-radius:999px; border:1.5px solid var(--lc)}
 .raft{position:absolute; left:0; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:2px;
   font-size:26px; transition:left .24s linear; z-index:2; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
@@ -385,7 +385,7 @@ h2.phead span{color:var(--act)}
 <!-- ============ ACCUEIL ============ -->
 <div class="screen on" id="home">
   <div class="burstwrap"><div class="burst" style="opacity:.5"></div></div>
-  <h1 class="logo">VA<b>CA</b><i>R</i>ME<u>!</u></h1>
+  <h1 class="logo">VA<b>CA</b><span class="r">R</span>ME<u>!</u></h1>
   <div class="tag">Le tournoi de soirée qui ruine les amitiés · 3 à 8 joueurs</div>
   <div class="homegrid">
     <div class="card">
@@ -533,7 +533,6 @@ const EMOJIS=['🦊','🐙','🦖','🐸','🦩','🐼','🐨','🦁'];
 const ACTES=[
  {id:'tp',    nom:'TU PRÉFÈRES',      mult:1, col:'#FFD023', desc:'Vote… et prédis la majorité !', pts:'20 pts par bonne prédiction', est:n=>2.5},
  {id:'draw',  nom:'DESSINE OU CRÈVE', mult:2, col:'#22D3EE', desc:'Un crayon, quatre détectives.', pts:'points ×2', est:n=>1.7*n},
- {id:'qd',    nom:'BLACK JACK',       mult:1, col:'#FF8A3D', desc:'Approche-toi de 21 sans exploser !', pts:'points = ton total (max 21) · 21 pile = +10', est:n=>3},
  {id:'imp',   nom:"L'IMPOSTEUR",      mult:3, col:'#FF3B5C', desc:'Un intrus se cache parmi vous…', pts:'points ×3', est:n=>7},
  {id:'indice',nom:'INDICE UNIQUE',    mult:1, col:'#7CF7D4', desc:'Coopérez… sans vous répéter !', pts:'devineur +25 · indice non doublonné +10', coop:true, est:n=>1.3*n},
  {id:'accord',nom:'ACCORD PARFAIT',   mult:1, col:'#F472B6', desc:'Pensez pareil… sans vous parler !', pts:'+10 par joueur accordé avec toi', coop:true, est:n=>2.5},
@@ -544,11 +543,10 @@ const ACTES=[
  {id:'race',  nom:'LA COURSE',        mult:1, col:'#E879F9', desc:'Sprint de clics — premier au drapeau !', pts:'points au classement : 30/22/16/10/6', est:n=>1.5},
  {id:'raft',  nom:'LE RADEAU',        mult:1, col:'#14B8A6', coop:true, desc:'Pagayez en rythme : gauche, droite !', pts:'équipage gagnant +30 chacun · 2e +15', est:n=>1.8},
  {id:'panik', nom:'PANIK !',          mult:2, col:'#B388FF', desc:'⁉️ MODE MYSTÈRE ⁉️',            pts:'TOUS LES POINTS ×2 · 3 vies', est:n=>3}];
-const POOL=[0,1,2,3,4,5,6,7,8,9,10,11]; const PANIK_IDX=12;
+const POOL=[0,1,2,3,4,5,6,7,8,9,10]; const PANIK_IDX=11;
 const REGLES={
  tp:"3 dilemmes. À chaque fois, DEUX actions : ① vote secrètement A ou B, ② prédis quel camp sera majoritaire. Tu marques 20 pts si ta prédiction est juste. Égalité parfaite = personne ne marque.",
  draw:"Chacun dessine une fois. Le dessinateur choisit un mot (facile, moyen ou corsé) et a 75 s pour le faire deviner. Les autres tapent leurs réponses : plus tu trouves vite, plus tu gagnes (10 à 30 pts ×2). Le dessinateur prend +10 par détective. Des lettres se dévoilent à 45 s et 22 s.",
- qd:"3 manches de Black Jack simultané. Tu pars avec 2 cartes. CARTE = tirer une carte de plus, JE RESTE = ton total devient tes points. Plus de 21 = zéro. 21 pile = BLACK JACK, +10 de bonus. Le % de risque est affiché… à toi de voir si tu l'écoutes.",
  imp:"Tous reçoivent le même mot sauf un, qui a un mot voisin — et personne ne sait qui (même pas lui). Un indice chacun (3 mots max), débat au vocal, vote. Démasqué : bons votants +20 ×3, et l'imposteur peut contre-attaquer en devinant VOTRE mot pour voler la moitié des gains. S'il s'échappe : +50 ×3.",
  indice:"Coopératif : un devineur par manche. Les autres écrivent UN mot d'indice en secret — les indices identiques s'annulent ! S'il trouve : devineur +25, chaque indice non doublonné +10.",
  accord:"Coopératif : un thème s'affiche, chacun écrit une réponse en secret. +10 par joueur qui a écrit la MÊME chose que toi. Soyez prévisibles… ensemble.",
@@ -556,7 +554,7 @@ const REGLES={
  bac:"Une catégorie et une lettre : 20 s pour taper un mot qui commence par cette lettre. Valide = +10, et +5 de bonus si personne d'autre n'a écrit le même mot.",
  coop:"Coopératif total : objectif de clics collectif (ex : 57 ±4)… mais le total est SECRET — comptez de tête et parlez-vous ! Dans la zone : +25 CHACUN. Raté : zéro pour tous, et le coupable est affiché.",
  rf:"3 signaux : l'écran passe du rouge au vert, clique le plus vite possible. Cliquer trop tôt = +1000 ms de pénalité. Total le plus bas en tête : points au classement 30/22/16/10/6.",
- raft:"Coopératif en équipages : duos tirés au sort (+1 kayakiste solo si nombre impair). L'un rame à GAUCHE, l'autre à DROITE : le radeau n'avance QUE si vous alternez gauche-droite en rythme (moins d'une seconde entre deux coups). 40 coups synchronisés pour franchir la ligne. Équipage gagnant : +30 chacun, 2e : +15.",
+ raft:"Coopératif en équipages : duos tirés au sort (+1 kayakiste solo si nombre impair). L'un rame à GAUCHE, l'autre à DROITE : le radeau n'avance QUE si vous alternez gauche-droite en rythme (moins d'une seconde entre deux coups) — deux fois le même côté ou trop lent, et il RECULE ! 40 coups synchronisés pour franchir la ligne. Équipage gagnant : +30 chacun, 2e : +15.",
  race:"Sprint de 90 clics (souris ou barre ESPACE) jusqu'au drapeau, avatars en direct sur la piste. Photo-finish : 2,5 s après le premier arrivé. Points au classement 30/22/16/10/6.",
  panik:"⁉️ 12 vagues de micro-défis en rafale, 3 vies, points ×2. Ne devrait pas être visible ici… 👀"};
 function estMin(N,np){ const avg=POOL.reduce((a,i)=>a+ACTES[i].est(np||5),0)/POOL.length;
@@ -568,7 +566,7 @@ function pickIdx(setName,arr){ const s=H[setName]||(H[setName]=new Set());
   let idxs=arr.map((_,i)=>i).filter(i=>!s.has(i));
   if(!idxs.length){ s.clear(); idxs=arr.map((_,i)=>i); }
   const i=pick(idxs); s.add(i); return i; }
-const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, qd_turn:8, qd_reveal:7, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, ac_write:25, qui_vote:25, bac_write:20, coop_play:12, rf_play:16, race_play:20, raft_play:30, pk:[5,5,5,4,4,4,4,3,3,3,3,3]};
+const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, ac_write:25, qui_vote:25, bac_write:20, coop_play:12, rf_play:16, race_play:20, raft_play:30, pk:[5,5,5,4,4,4,4,3,3,3,3,3]};
 const PTS={pred:20, drawFind:[30,10], drawArtist:10, impCatch:20, impEscape:50, impConsol:10};
 
 /* ================================================================
@@ -705,7 +703,7 @@ function endPhaseEarly(){ if(!phaseResolve)return; stopTimer(); const r=phaseRes
 function connectedSlots(){ return H.players.filter(p=>p.connected).map(p=>p.slot); }
 function addPts(slot,base){ const mult=H.actIdx>=0?ACTES[H.actIdx].mult:1; const jk=H.jokerArm[slot]?2:1;
   const v=base*mult*jk; const p=H.players.find(x=>x.slot===slot); if(p)p.score+=v; return v; }
-function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,qd:0,pk:0,ind:0,ac:0,qui:0,bac:0,coop:0,rf:0,race:0,raft:0}; H.stats[slot][k]+=v; }
+function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,pk:0,ind:0,ac:0,qui:0,bac:0,coop:0,rf:0,race:0,raft:0}; H.stats[slot][k]+=v; }
 
 /* fx synchronisé (flash / compte à rebours) */
 function fxAll(kind,a){ bcast({t:'fx',kind,a});
@@ -754,7 +752,6 @@ function hostHandle(slot,m){
   if(H.phase==='imp_vote'&&a.type==='vote'){ impVote(slot,a.who); return; }
   if(H.phase==='imp_guess'&&a.type==='cguess'){ impCounter(slot,a.w); return; }
   if(H.phase==='imp_debate'&&a.type==='rdy'){ impRdy(slot); return; }
-  if(H.phase==='qd_turn'&&a.type==='qd'){ qdChoose(slot,a.go); return; }
   if(H.phase==='ind_write'&&a.type==='ind_c'){ indClue(slot,a.w); return; }
   if(H.phase==='ac_write'&&a.type==='ac'){ acAns(slot,a.w); return; }
   if(H.phase==='qui_vote'&&a.type==='qv'){ quiVote(slot,a.who); return; }
@@ -812,7 +809,6 @@ async function runTournament(){
 async function runAct(id){
   if(id==='tp')await runTP();
   if(id==='draw')await runDraw();
-  if(id==='qd')await runQD();
   if(id==='imp')await runImp();
   if(id==='indice')await runIndice();
   if(id==='accord')await runAccord();
@@ -912,52 +908,6 @@ function drawGuess(slot,text){ const D=H.secret.draw;
 /* ================================================================
    QUITTE OU DOUBLE (logique hôte) — façon Flip 7
 ================================================================ */
-async function runQD(){ for(let m=0;m<3;m++){ await readyPhase('Manche '+(m+1)+' / 3'); await qdManche(); } }
-// tirage façon jeu de 52 : 2-9 (1/13 chacun), 10/V/D/R (4/13), As=11 souple (1/13)
-function bjDraw(){ const r=rnd(13);
-  if(r<8)return {v:r+2,label:String(r+2)};
-  if(r<12)return {v:10,label:pick(['10','V','D','R'])};
-  return {v:11,label:'A',ace:true}; }
-function bjAdd(P,c){ P.cards.push(c); P.sum+=c.v; if(c.ace)P.aces++;
-  while(P.sum>21&&P.aces>0){ P.sum-=10; P.aces--; } }
-function qdPub(Q){ return {turn:Q.turn, done:[],
-  boards:H.players.filter(p=>Q.p[p.slot]).map(p=>{const P=Q.p[p.slot];
-    return {slot:p.slot,cards:P.cards.map(c=>c.label),sum:P.sum,status:P.status,last:P.last};})}; }
-function qdPriv(Q,s){ const P=Q.p[s]; if(!P)return {};
-  if(P.status!=='in')return {qdOut:P.status,qdBank:P.banked};
-  const reste=21-P.sum; let bad=0;
-  if(P.aces===0){ for(let v=2;v<=9;v++)if(v>reste)bad+=1; if(10>reste)bad+=4; }
-  return {qdIn:true, myChoice:Q.choices[s]??null, risk:Math.round(100*bad/13)}; }
-async function qdManche(){
-  const slots=connectedSlots();
-  const Q={turn:0,p:{},choices:{}}; H.secret.qd=Q;
-  slots.forEach(s=>{ const P={cards:[],sum:0,aces:0,status:'in',last:null,banked:0}; Q.p[s]=P;
-    bjAdd(P,bjDraw()); bjAdd(P,bjDraw());   // main de départ : 2 cartes, comme au casino
-    if(P.sum===21){ P.status='bj'; P.banked=31; } });
-  while(true){
-    const active=slots.filter(s=>Q.p[s].status==='in');
-    if(!active.length)break;
-    Q.turn++; Q.choices={};
-    await setPhase('qd_turn',DUREES.qd_turn,qdPub(Q),s=>qdPriv(Q,s));
-    active.forEach(s=>{ const P=Q.p[s]; const go=Q.choices[s]===true;   // sans réponse = JE RESTE auto
-      if(!go){ P.status='stop'; P.banked=P.sum; P.last=null; return; }
-      const c=bjDraw(); bjAdd(P,c);
-      P.last={card:c.label,bust:P.sum>21};
-      if(P.sum>21){ P.status='bust'; P.banked=0; }
-      else if(P.sum===21){ P.status='bj'; P.banked=31; } });
-  }
-  const gains={};
-  slots.forEach(s=>{ const P=Q.p[s]; if(P.banked>0){ gains[s]=addPts(s,P.banked); stat(s,'qd',P.banked); } });
-  SFX.reveal();
-  await setPhase('qd_reveal',DUREES.qd_reveal,
-    {res:slots.map(s=>({slot:s,cards:Q.p[s].cards.map(c=>c.label),sum:Q.p[s].sum,status:Q.p[s].status,banked:Q.p[s].banked,last:Q.p[s].last})),gains});
-}
-function qdChoose(slot,go){ const Q=H.secret.qd; if(!Q||H.phase!=='qd_turn')return;
-  const P=Q.p[slot]; if(!P||P.status!=='in')return;
-  Q.choices[slot]=!!go; H.pubData.done=Object.keys(Q.choices).map(Number); push();
-  const need=connectedSlots().filter(s=>Q.p[s]&&Q.p[s].status==='in');
-  if(need.every(s=>Q.choices[s]!=null))endPhaseEarly(); }
-
 /* ================================================================
    INDICE UNIQUE (logique hôte) — façon Just One, coop à scoring hybride
 ================================================================ */
@@ -1136,7 +1086,8 @@ async function raceRound(){
 function raceAdd(slot,n){ const R=H.secret.race; if(!R||H.phase!=='race_play'||R.fin.includes(slot))return;
   R.pos[slot]=(R.pos[slot]||0)+Math.max(0,Math.min(30,n|0));
   if(R.pos[slot]>=R.goal){ R.pos[slot]=R.goal; R.fin.push(slot);
-    if(R.fin.length===1)setTimeout(()=>{ if(H.phase==='race_play')endPhaseEarly(); },2500);
+    if(R.fin.length===1){ const lbl=H.roundLabel;
+      setTimeout(()=>{ if(H.phase==='race_play'&&H.roundLabel===lbl)endPhaseEarly(); },2500); }
     if(R.fin.length>=connectedSlots().length)endPhaseEarly(); } }
 function rcnUI(p){ Object.entries(p).forEach(([s,v])=>{ const e=$('#racer'+s); if(!e)return;
   const R=(S&&S.data&&S.data.goal)||90; const pc=Math.min(100,100*v/R);
@@ -1175,10 +1126,13 @@ function rowStroke(slot,side){ const T=H.secret.raft; if(!T||H.phase!=='raft_pla
   // côté autorisé : duo = côté fixe, solo = les deux
   if(tm.slots.length===2){ const my=tm.slots[0]===slot?'L':'R'; if(side!==my)return; }
   const now=Date.now();
-  if(tm.lastSide&&side!==tm.lastSide&&(now-tm.lastT)<950){ tm.prog++;
+  if(!tm.lastSide){ /* tout premier coup : neutre */ }
+  else if(side!==tm.lastSide&&(now-tm.lastT)<950){ tm.prog++;
     if(tm.prog>=T.goal){ tm.fin=1; T.finOrder.push(ti);
-      if(T.finOrder.length===1)setTimeout(()=>{ if(H.phase==='raft_play')endPhaseEarly(); },2000);
+      if(T.finOrder.length===1){ const lbl=H.roundLabel;
+        setTimeout(()=>{ if(H.phase==='raft_play'&&H.roundLabel===lbl)endPhaseEarly(); },2000); }
       if(T.finOrder.length>=T.teams.length)endPhaseEarly(); } }
+  else tm.prog=Math.max(0,tm.prog-1);   // même côté deux fois ou trop lent : le radeau RECULE
   tm.lastSide=side; tm.lastT=now; }
 function rdnUI(p){ p.forEach((v,ti)=>{ const e=$('#raft'+ti); if(!e)return;
   const G=(S&&S.data&&S.data.goal)||40; const pc=Math.min(100,100*v/G);
@@ -1212,7 +1166,7 @@ async function runPanik(){
   }
   const bonus={}; slots.forEach(s=>{ if(K.lives[s]>0)bonus[s]=addPts(s,10*K.lives[s]); });
   SFX.fanfare();
-  await setPhase('panik_end',DUREES.qd_reveal,{bonus,lives:{...K.lives}});
+  await setPhase('panik_end',DUREES.reveal+2,{bonus,lives:{...K.lives}});
 }
 function pkReport(slot,ok){ const K=H.secret.pk; if(!K||H.phase!=='panik_round')return;
   if(!K.lives[slot]||K.results[slot]!=null)return;
@@ -1286,7 +1240,6 @@ function computeTitles(){ const out=[];
   best('guess','Fin limier · a tout deviné','🔎');
   best('imp','Baron du bluff · imposteur insaisissable','🃏');
   best('det','Détective · flaire les intrus','👮');
-  best('qd','Sang froid · roi du stop-ou-encore','🧊');
   best('pk','Nerfs d\'acier · survivant du chaos','⚡');
   best('ind','Muse · indices qui font mouche','💡');
   best('ac','Mouton en chef · toujours accordé','🐑');
@@ -1573,48 +1526,6 @@ R.draw_reveal=st=>{ const p=px(S.data.drawer);
   const last=GALLERY[GALLERY.length-1];
   if(last&&last.word===S.data.word){ const im=el('img','revealimg'); im.src=last.img; st.appendChild(im); }
   st.appendChild(el('div','subhead',S.data.nf>0?(S.data.nf+' détective(s) sur le coup — bravo l\'artiste '+p.emoji):'Personne n\'a trouvé… '+esc(p.name)+', on doit parler de ton art. 🎨💀'));
-  gainsList(st,S.data.gains); };
-
-/* ---- QUITTE OU DOUBLE ---- */
-function qdBoards(st,boards,revealMode){ const g=el('div','qdgrid');
-  boards.forEach(b=>{ const p=px(b.slot);
-    const c=el('div','qdcol'+(b.status==='bust'?' bust':'')+(b.status==='stop'?' stopped':'')+(b.status==='bj'?' f7':''));
-    c.style.setProperty('--pc',p.color);
-    c.innerHTML='<div class="who">'+p.emoji+' '+esc(p.name)+(b.slot===ME.slot?' (toi)':'')+'</div>';
-    const cards=el('div','cards');
-    b.cards.forEach((v,i)=>{ const isLast=b.last&&i===b.cards.length-1;
-      cards.appendChild(el('div','qdc'+(isLast?(b.last.bust?' dup':' new'):''),v)); });
-    c.appendChild(cards);
-    c.appendChild(el('div','sum',(b.status==='bust'?'💥 '+b.sum:(b.sum??b.banked??0))+' / 21'+(b.status==='bj'?' +10':'')));
-    c.appendChild(el('div','stat',b.status==='in'?'🎲 en jeu':(b.status==='stop'?'✋ je reste':(b.status==='bj'?'🂡 BLACK JACK !':'dépassé…'))));
-    g.appendChild(c); });
-  st.appendChild(g); }
-
-R.qd_turn=st=>{ st.appendChild(el('h2','phead','🂡 Objectif <span>21</span> — carte ou je reste ?'));
-  if(S.data.turn===1)st.appendChild(el('div','qdrules',
-    '📖 Comme au casino : approche-toi de <b>21</b> sans jamais dépasser. '+
-    '🃏 <b>CARTE</b> = tu tires (2 à 10, figures = 10, As = 11 ou 1). '+
-    '💥 Plus de 21 = tu perds tout. '+
-    '✋ <b>JE RESTE</b> = ton total devient tes points. '+
-    '🂡 <b>21 pile = BLACK JACK, +10 de bonus !</b>'));
-  qdBoards(st,S.data.boards);
-  if(ME.qdIn){ const b=el('div','qdbtns');
-    const enc=el('button','btn encore','🃏 CARTE !');
-    const stp=el('button','btn stop','✋ JE RESTE');
-    if(ME.myChoice===true)enc.style.outline='5px solid #fff';
-    if(ME.myChoice===false)stp.style.outline='5px solid #fff';
-    enc.onclick=()=>{SFX.click(); sendHost({t:'a',a:{type:'qd',go:true}});};
-    stp.onclick=()=>{SFX.click(); sendHost({t:'a',a:{type:'qd',go:false}});};
-    b.appendChild(enc); b.appendChild(stp); st.appendChild(b);
-    st.appendChild(el('div','qdrisk','⚠️ Risque de dépasser 21 au prochain tirage : '+ME.risk+' %'));
-  } else st.appendChild(el('div','subhead mt',ME.qdOut==='bust'?'💥 Trop gourmand… savoure le stress des autres.':(ME.qdOut==='bj'?'🂡 BLACK JACK ! La classe absolue.':'✋ '+(ME.qdBank||0)+' pts au chaud. Regarde-les transpirer.')));
-  st.appendChild(el('div','hint mt','Sans clic avant la fin du timer : JE RESTE automatique'));
-  dots(st,S.data.done); };
-
-R.qd_reveal=st=>{ const bj=S.data.res.filter(r=>r.status==='bj');
-  st.appendChild(el('h2','phead',bj.length?('🂡 BLACK JACK de <span>'+bj.map(r=>esc(px(r.slot).name)).join(' & ')+'</span> !'):'Fin de <span>manche</span>'));
-  qdBoards(st,S.data.res);
-  st.appendChild(el('div','subhead','Points sécurisés cette manche :'));
   gainsList(st,S.data.gains); };
 
 /* ---- IMPOSTEUR ---- */
@@ -1923,8 +1834,8 @@ R.race_reveal=st=>{ st.appendChild(el('h2','phead','🏎 Résultats du <span>spr
 R.raft_play=st=>{ st.appendChild(el('h2','phead','🛶 ALTERNEZ : gauche, droite, <span>en rythme</span> !'));
   const mate=ME.mate!=null?px(ME.mate):null;
   st.appendChild(el('div','subhead',ME.side==='LR'
-    ?'☝️ Kayakiste solo : alterne toi-même ← et → (flèches du clavier ou boutons)'
-    :'Ton équipage : toi + <b style="color:'+(mate?mate.color:'#fff')+'">'+esc(mate?mate.name:'')+'</b> — TOI tu rames à '+(ME.side==='L'?'GAUCHE':'DROITE')+'. Le radeau n\'avance que si vous alternez à moins d\'une seconde d\'écart !'));
+    ?'☝️ Kayakiste solo : alterne toi-même ← et → (flèches ou boutons) — un mauvais coup et tu RECULES !'
+    :'Ton équipage : toi + <b style="color:'+(mate?mate.color:'#fff')+'">'+esc(mate?mate.name:'')+'</b> — TOI tu rames à '+(ME.side==='L'?'GAUCHE':'DROITE')+'. Alternez à moins d\'une seconde d\'écart, sinon le radeau RECULE !'));
   const tr=el('div','racetrack');
   (S.data.teams||[]).forEach((t,ti)=>{ const l=el('div','raftlane');
     const p0=px(t.slots[0]);
