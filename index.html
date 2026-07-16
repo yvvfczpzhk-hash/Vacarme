@@ -366,6 +366,15 @@ body.mystery #mysteryveil{display:block}
 .rowbtns .btn.left{background:linear-gradient(160deg,#38BDF8,#0284C7); color:#fff}
 .rowbtns .btn.right{background:linear-gradient(160deg,#34D399,#059669); color:#fff}
 
+.blzone{width:min(720px,88vw); height:290px; border-radius:26px; background:var(--panel2); border:3px dashed var(--line);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer;
+  font-family:'Fredoka'; font-weight:700; font-size:44px; color:var(--ink); user-select:none}
+.blzone.sent{cursor:default; border-style:solid; border-color:var(--act); font-size:34px}
+.relaylane .mid{position:absolute; left:50%; top:8px; bottom:8px; width:3px; background:var(--line); border-radius:2px}
+#relbtn{font-size:32px; padding:22px 56px; margin-top:16px}
+#relbtn:disabled{opacity:.45; cursor:default}
+#relinf{margin-top:10px}
+
 /* ============ DIVERS ============ */
 #hostforce{position:fixed; bottom:16px; right:16px; z-index:60; display:none; opacity:.6}
 #hostforce:hover{opacity:1}
@@ -542,8 +551,10 @@ const ACTES=[
  {id:'rf',    nom:'RÉFLEXE ROYALE',   mult:1, col:'#FB923C', desc:'Le plus rapide rafle la mise.', pts:'points au classement : 30/22/16/10/6', est:n=>1.5},
  {id:'race',  nom:'LA COURSE',        mult:1, col:'#E879F9', desc:'Sprint de clics — premier au drapeau !', pts:'points au classement : 30/22/16/10/6', est:n=>1.5},
  {id:'raft',  nom:'LE RADEAU',        mult:1, col:'#14B8A6', coop:true, desc:'Pagayez en rythme : gauche, droite !', pts:'équipage gagnant +30 chacun · 2e +15', est:n=>1.8},
+ {id:'blind', nom:'MINUTE AVEUGLE',   mult:1, col:'#FF8A3D', desc:'Sens le temps passer… sans montre !', pts:'le plus proche de la cible : 20/14/10/6', est:n=>1.5},
+ {id:'relay', nom:'LE RELAIS',        mult:1, col:'#0EA5E9', coop:true, desc:'50 clics chacun, passe le témoin !', pts:'équipe gagnante +30 chacun · 2e +15', est:n=>1.5},
  {id:'panik', nom:'PANIK !',          mult:2, col:'#B388FF', desc:'⁉️ MODE MYSTÈRE ⁉️',            pts:'TOUS LES POINTS ×2 · 3 vies', est:n=>3}];
-const POOL=[0,1,2,3,4,5,6,7,8,9,10]; const PANIK_IDX=11;
+const POOL=[0,1,2,3,4,5,6,7,8,9,10,11,12]; const PANIK_IDX=13;
 const REGLES={
  tp:"3 dilemmes. À chaque fois, DEUX actions : ① vote secrètement A ou B, ② prédis quel camp sera majoritaire. Tu marques 20 pts si ta prédiction est juste. Égalité parfaite = personne ne marque.",
  draw:"Chacun dessine une fois. Le dessinateur choisit un mot (facile, moyen ou corsé) et a 75 s pour le faire deviner. Les autres tapent leurs réponses : plus tu trouves vite, plus tu gagnes (10 à 30 pts ×2). Le dessinateur prend +10 par détective. Des lettres se dévoilent à 45 s et 22 s.",
@@ -556,6 +567,8 @@ const REGLES={
  rf:"3 signaux : l'écran passe du rouge au vert, clique le plus vite possible. Cliquer trop tôt = +1000 ms de pénalité. Total le plus bas en tête : points au classement 30/22/16/10/6.",
  raft:"Coopératif en équipages : duos tirés au sort (+1 kayakiste solo si nombre impair). L'un rame à GAUCHE, l'autre à DROITE : le radeau n'avance QUE si vous alternez gauche-droite en rythme (moins d'une seconde entre deux coups) — deux fois le même côté ou trop lent, et il RECULE ! 40 coups synchronisés pour franchir la ligne. Équipage gagnant : +30 chacun, 2e : +15.",
  race:"Sprint de 90 clics (souris ou barre ESPACE) jusqu'au drapeau, avatars en direct sur la piste. Photo-finish : 2,5 s après le premier arrivé. Points au classement 30/22/16/10/6.",
+ blind:"Une cible s'affiche (7, 10 puis 13 secondes). Le chrono démarre — dans ta tête, rien à l'écran ! Clique quand tu penses que la durée EXACTE est écoulée. Ton temps reste secret jusqu'au reveal. Le plus proche : +20, puis 14/10/6/4.",
+ relay:"Coopératif en équipages tirés au sort : le premier relayeur clique 50 fois, PUIS le témoin passe au second qui clique ses 50 (le coureur solo fait les deux relais). Cliquer hors de ton tour ne compte pas ! Première équipe à 100 clics : +30 chacun, 2e : +15.",
  panik:"⁉️ 12 vagues de micro-défis en rafale, 3 vies, points ×2. Ne devrait pas être visible ici… 👀"};
 function estMin(N,np){ const avg=POOL.reduce((a,i)=>a+ACTES[i].est(np||5),0)/POOL.length;
   return Math.round(avg*N+3+0.45*N); }
@@ -566,7 +579,7 @@ function pickIdx(setName,arr){ const s=H[setName]||(H[setName]=new Set());
   let idxs=arr.map((_,i)=>i).filter(i=>!s.has(i));
   if(!idxs.length){ s.clear(); idxs=arr.map((_,i)=>i); }
   const i=pick(idxs); s.add(i); return i; }
-const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, ac_write:25, qui_vote:25, bac_write:20, coop_play:12, rf_play:16, race_play:20, raft_play:30, pk:[5,5,5,4,4,4,4,3,3,3,3,3]};
+const DUREES={tp_vote:15, draw_pick:12, draw_live:75, imp_word:8, imp_clue:45, imp_debate:75, imp_vote:30, imp_caught:6, imp_guess:22, ready:5, reveal:6, scoreboard:5, panik_result:3, ind_write:45, ind_guess:35, ind_reveal:8, ac_write:25, qui_vote:25, bac_write:20, coop_play:12, rf_play:16, race_play:20, raft_play:30, relay_play:30, pk:[5,5,5,4,4,4,4,3,3,3,3,3]};
 const PTS={pred:20, drawFind:[30,10], drawArtist:10, impCatch:20, impEscape:50, impConsol:10};
 
 /* ================================================================
@@ -703,7 +716,7 @@ function endPhaseEarly(){ if(!phaseResolve)return; stopTimer(); const r=phaseRes
 function connectedSlots(){ return H.players.filter(p=>p.connected).map(p=>p.slot); }
 function addPts(slot,base){ const mult=H.actIdx>=0?ACTES[H.actIdx].mult:1; const jk=H.jokerArm[slot]?2:1;
   const v=base*mult*jk; const p=H.players.find(x=>x.slot===slot); if(p)p.score+=v; return v; }
-function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,pk:0,ind:0,ac:0,qui:0,bac:0,coop:0,rf:0,race:0,raft:0}; H.stats[slot][k]+=v; }
+function stat(slot,k,v=1){ if(!H.stats[slot])H.stats[slot]={pred:0,artist:0,guess:0,imp:0,det:0,pk:0,ind:0,ac:0,qui:0,bac:0,coop:0,rf:0,race:0,raft:0,blind:0,relay:0}; H.stats[slot][k]+=v; }
 
 /* fx synchronisé (flash / compte à rebours) */
 function fxAll(kind,a){ bcast({t:'fx',kind,a});
@@ -760,6 +773,8 @@ function hostHandle(slot,m){
   if(H.phase==='rf_play'&&a.type==='rf'){ rfReport(slot,a.ms); return; }
   if(H.phase==='race_play'&&a.type==='race'){ raceAdd(slot,a.n); return; }
   if(H.phase==='raft_play'&&a.type==='row'){ rowStroke(slot,a.side); return; }
+  if(H.phase==='blind_play'&&a.type==='bl'){ blRep(slot,a.ms); return; }
+  if(H.phase==='relay_play'&&a.type==='rl'){ relayAdd(slot,a.n); return; }
   if(H.phase==='ind_guess'&&a.type==='ind_g'){ indGuess(slot,a.w); return; }
   if(H.phase==='panik_round'&&a.type==='pk'){ pkReport(slot,a.ok); return; }
 }
@@ -781,6 +796,7 @@ function clientOnData(m){ switch(m.t){
   case 'ccn': ccnUI(m.n); break;
   case 'rcn': rcnUI(m.p); break;
   case 'rdn': rdnUI(m.p); break;
+  case 'rln': rlnUI(m.p); break;
   case 'nope': toast('❌ '+m.msg,4000); $('#joinhint').innerHTML=m.msg; NET.alive=false; break;
 } }
 
@@ -818,6 +834,8 @@ async function runAct(id){
   if(id==='rf')await runReflexe();
   if(id==='race')await runRace();
   if(id==='raft')await runRaft();
+  if(id==='blind')await runBlind();
+  if(id==='relay')await runRelay();
 }
 async function readyPhase(label){ H.roundLabel=label; H.jokerArm={};
   await setPhase('ready',DUREES.ready,{label});
@@ -1140,6 +1158,78 @@ function rdnUI(p){ p.forEach((v,ti)=>{ const e=$('#raft'+ti); if(!e)return;
   if(v>=G&&!e.dataset.fin){ e.dataset.fin='1'; SFX.found(); } }); }
 
 /* ================================================================
+   MINUTE AVEUGLE — horloge interne, aucun chrono à l'écran
+================================================================ */
+const BL_TARGETS=[7,10,13];
+async function runBlind(){ for(let m=0;m<3;m++){ await readyPhase('Cible '+(m+1)+' / 3'); await blindRound(BL_TARGETS[m]); } }
+async function blindRound(target){
+  const B={target,ms:{}}; H.secret.bl=B;
+  await setPhase('blind_play',target+8,{target});
+  const res=connectedSlots().filter(s=>B.ms[s]!=null)
+    .map(s=>({slot:s,ms:B.ms[s],diff:Math.abs(B.ms[s]-target*1000)}))
+    .sort((a,b)=>a.diff-b.diff);
+  const bar=[20,14,10,6,4]; const gains={};
+  res.forEach((r,i)=>{ gains[r.slot]=addPts(r.slot,bar[Math.min(i,bar.length-1)]); stat(r.slot,'blind',i===0?2:1); });
+  SFX.reveal();
+  await setPhase('blind_reveal',DUREES.reveal+2,{target,res,gains});
+}
+function blRep(slot,ms){ const B=H.secret.bl; if(!B||H.phase!=='blind_play'||B.ms[slot]!=null)return;
+  B.ms[slot]=Math.max(0,Math.min(60000,ms|0));
+  if(connectedSlots().every(s=>B.ms[s]!=null))endPhaseEarly(); }
+
+/* ================================================================
+   LE RELAIS — coop : 50 clics chacun puis passage de témoin
+================================================================ */
+async function runRelay(){ for(let m=0;m<2;m++){ await readyPhase('Relais '+(m+1)+' / 2 — équipes tirées au sort'); await relayRound(); } }
+async function relayRound(){
+  const slots=shuffle(connectedSlots());
+  const teams=[];
+  for(let i=0;i+1<slots.length;i+=2)teams.push({slots:[slots[i],slots[i+1]]});
+  if(slots.length%2)teams.push({slots:[slots[slots.length-1]]});
+  teams.forEach(t=>{ t.seg=0; t.count=0; t.fin=0; });
+  const T={teams,per:50,segs:2,finOrder:[],sent:''}; H.secret.relay=T;
+  const iv=setInterval(()=>{ const snap=teams.map(t=>t.seg*100+t.count).join(',');
+    if(snap!==T.sent){ T.sent=snap; const p=teams.map(t=>({s:t.seg,c:t.count})); bcast({t:'rln',p}); rlnUI(p); } },240);
+  await setPhase('relay_play',DUREES.relay_play,
+    {per:T.per,segs:T.segs,teams:teams.map(t=>({slots:t.slots}))},
+    s=>({team:teams.findIndex(t=>t.slots.includes(s))}));
+  clearInterval(iv);
+  const rest=teams.map((t,i)=>i).filter(i=>!teams[i].fin)
+    .sort((a,b)=>(teams[b].seg*50+teams[b].count)-(teams[a].seg*50+teams[a].count));
+  const rank=[...T.finOrder,...rest];
+  const bar=[30,15,8,4]; const gains={};
+  rank.forEach((ti,i)=>{ teams[ti].slots.forEach(s=>{ const prog=teams[ti].seg*50+teams[ti].count;
+    if(prog>0){ gains[s]=addPts(s,bar[Math.min(i,bar.length-1)]); stat(s,'relay',i===0?2:1); } }); });
+  SFX.reveal();
+  await setPhase('relay_reveal',DUREES.reveal+2,
+    {rank:rank.map(ti=>({slots:teams[ti].slots,prog:Math.min(teams[ti].seg*50+teams[ti].count,100),fin:!!teams[ti].fin})),gains});
+}
+function relayAdd(slot,n){ const T=H.secret.relay; if(!T||H.phase!=='relay_play')return;
+  const ti=T.teams.findIndex(t=>t.slots.includes(slot)); if(ti<0)return;
+  const tm=T.teams[ti]; if(tm.fin)return;
+  const runner=tm.slots[tm.seg%tm.slots.length];
+  if(slot!==runner)return;   // pas ton relais !
+  tm.count+=Math.max(0,Math.min(30,n|0));
+  while(tm.count>=T.per){ tm.count-=T.per; tm.seg++;
+    if(tm.seg>=T.segs){ tm.fin=1; tm.count=0; T.finOrder.push(ti);
+      if(T.finOrder.length===1){ const lbl=H.roundLabel;
+        setTimeout(()=>{ if(H.phase==='relay_play'&&H.roundLabel===lbl)endPhaseEarly(); },2000); }
+      if(T.finOrder.length>=T.teams.length)endPhaseEarly(); break; } } }
+function rlnUI(p){ if(!S||!S.data||!S.data.teams)return;
+  p.forEach((t,ti)=>{ const e=$('#relbat'+ti); if(!e)return;
+    const prog=Math.min(100,t.s*50+t.c);
+    e.style.left='calc('+prog+'% - '+Math.round(prog*0.56)+'px)';
+    if(t.s>=2&&!e.dataset.fin){ e.dataset.fin='1'; e.textContent='🏆'; SFX.found(); }
+    const team=S.data.teams[ti]; if(!team||!team.slots.includes(ME.slot))return;
+    const runner=team.slots[t.s%team.slots.length];
+    const btn=$('#relbtn'), inf=$('#relinf'); if(!btn||!inf)return;
+    if(t.s>=2){ btn.disabled=true; inf.textContent='🏆 Relais terminé !'; }
+    else if(runner===ME.slot){ btn.disabled=false; btn.textContent='🏃 CLIQUE ! ('+t.c+' / 50)';
+      inf.textContent='À TOI de courir — relais '+(t.s+1)+' / 2'; }
+    else{ btn.disabled=true; btn.textContent='⏳ …';
+      inf.textContent=(t.s===0?'Prépare-toi, ':'')+px(runner).name+' court le relais '+(t.s+1)+' / 2'; } }); }
+
+/* ================================================================
    PANIK ! (logique hôte) — micro-défis façon WarioWare
 ================================================================ */
 async function runPanik(){
@@ -1249,6 +1339,8 @@ function computeTitles(){ const out=[];
   best('rf','Cobra · réflexes surnaturels','🏁');
   best('race','Pilote · sprints victorieux','🏎');
   best('raft','Rameur d\'élite · toujours en rythme','🛶');
+  best('blind','Horloge suisse · maître du temps','🕐');
+  best('relay','Sprinteur relais · témoins impeccables','🏃');
   return out; }
 
 /* ================================================================
@@ -1864,6 +1956,64 @@ R.raft_reveal=st=>{ st.appendChild(el('h2','phead','🛶 Arrivée des <span>équ
     d.innerHTML='<span class="rk">'+(i+1)+'</span><span class="nm">'+names+'</span>'+
       '<span class="dpts">'+(r.fin?'🏁 FINI':r.prog+' / '+S.data.goal)+'</span>'+
       '<span class="pts">+'+(S.data.gains[r.slots[0]]||0)+' chacun</span>';
+    w.appendChild(d); });
+  st.appendChild(w); };
+
+/* ---- MINUTE AVEUGLE ---- */
+R.blind_play=st=>{ const b=el('div','readybox');
+  b.appendChild(el('h2','phead','🕐 Clique à EXACTEMENT <span>'+S.data.target+',00 s</span>'));
+  b.appendChild(el('div','subhead','Le chrono vient de démarrer… dans ta tête. Rien à l\'écran, et ton temps restera secret jusqu\'au verdict !'));
+  const z=el('div','blzone','👆 clique quand c\'est le moment');
+  const t0=performance.now(); let done=false;
+  z.onclick=()=>{ if(done)return; done=true; SFX.click();
+    sendHost({t:'a',a:{type:'bl',ms:Math.round(performance.now()-t0)}});
+    z.className='blzone sent'; z.innerHTML='🤫 Envoyé !<div class="hint mt">On découvre tout ça ensemble au verdict…</div>'; };
+  b.appendChild(z); st.appendChild(b); };
+
+R.blind_reveal=st=>{ st.appendChild(el('h2','phead','🕐 Cible '+S.data.target+',00 s — les <span>horloges internes</span>'));
+  const w=el('div','standings');
+  S.data.res.forEach((r,i)=>{ const p=px(r.slot); const d=el('div','strow');
+    d.style.animationDelay=(i*.18)+'s'; d.style.setProperty('--pc',p.color);
+    const sec=(r.ms/1000).toFixed(2).replace('.',',');
+    d.innerHTML='<span class="rk">'+(i+1)+'</span><span class="av">'+p.emoji+'</span><span class="nm">'+esc(p.name)+'</span>'+
+      '<span class="dpts">'+sec+' s (±'+r.diff+' ms)</span><span class="pts">+'+(S.data.gains[r.slot]||0)+'</span>';
+    w.appendChild(d); });
+  const abs=S.players.filter(p=>p.connected&&!S.data.res.some(r=>r.slot===p.slot));
+  abs.forEach(p=>{ const d=el('div','strow'); d.style.setProperty('--pc',p.color);
+    d.innerHTML='<span class="rk">—</span><span class="av">'+p.emoji+'</span><span class="nm">'+esc(p.name)+'</span><span class="dpts">a oublié de cliquer 😴</span><span class="pts">+0</span>';
+    w.appendChild(d); });
+  st.appendChild(w); };
+
+/* ---- LE RELAIS ---- */
+R.relay_play=st=>{ st.appendChild(el('h2','phead','🏃 LE RELAIS — <span>50 clics</span> chacun !'));
+  st.appendChild(el('div','subhead','Le témoin passe automatiquement à 50. Cliquer hors de ton tour ne compte PAS — encourage au vocal !'));
+  const tr=el('div','racetrack');
+  (S.data.teams||[]).forEach((t,ti)=>{ const l=el('div','racelane relaylane');
+    const p0=px(t.slots[0]);
+    l.style.setProperty('--lc',p0.color);
+    l.innerHTML='<span class="lanename">'+t.slots.map(s=>esc(px(s).name)).join(' ➜ ')+(t.slots.includes(ME.slot)?' (toi)':'')+'</span>'+
+      '<span class="mid"></span><span class="flag">🏁</span>'+
+      '<div class="racer" id="relbat'+ti+'">🏃</div>';
+    tr.appendChild(l); });
+  st.appendChild(tr);
+  const btn=el('button','btn'); btn.id='relbtn'; btn.disabled=true; btn.textContent='⏳ …';
+  let delta=0;
+  const flush=()=>{ if(delta>0){ const n=delta; delta=0; sendHost({t:'a',a:{type:'rl',n}}); } };
+  const h=setInterval(flush,200);
+  btn.onclick=()=>{ delta++; SFX.click(); };
+  PK.cleanup=()=>{ clearInterval(h); flush(); };
+  st.appendChild(btn);
+  st.appendChild(el('div','subhead',''));
+  st.lastChild.id='relinf'; st.lastChild.textContent='Ordre de passage affiché sur ta ligne (➜)';
+  rlnUI((S.data.teams||[]).map(()=>({s:0,c:0}))); };
+
+R.relay_reveal=st=>{ st.appendChild(el('h2','phead','🏃 Arrivée du <span>relais</span>'));
+  const w=el('div','standings');
+  S.data.rank.forEach((r,i)=>{ const names=r.slots.map(s=>px(s).emoji+' '+esc(px(s).name)).join(' ➜ ');
+    const d=el('div','strow'); d.style.animationDelay=(i*.18)+'s';
+    d.style.setProperty('--pc',px(r.slots[0]).color);
+    d.innerHTML='<span class="rk">'+(i+1)+'</span><span class="nm">'+names+'</span>'+
+      '<span class="dpts">'+(r.fin?'🏁 FINI':r.prog+' / 100')+'</span><span class="pts">+'+(S.data.gains[r.slots[0]]||0)+' chacun</span>';
     w.appendChild(d); });
   st.appendChild(w); };
 
